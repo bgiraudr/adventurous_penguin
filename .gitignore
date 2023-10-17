@@ -1,0 +1,15 @@
+doxygen/*
+project/build/*
+sfmlGraphicsPipeline/build/*
+sfmlGraphicsPipeline/extlib/freetype-2.5.5/build/*
+.vscode/*
+sfmlGraphicsPipeline/extlib/glew-1.13.0/lib/*
+sfmlGraphicsPipeline/extlib/SFML-2.5.1/*
+doxygen.cfg.bak
+README.html
+*.aux
+*.fdb_latexmk
+*.fls
+*.log
+*.gz
+*.out
