@@ -34,6 +34,7 @@ TexturedMeshRenderable::TexturedMeshRenderable(
     MeshRenderable(program, mesh_filename), // Should initialize m_tcoords trought read_obj...
     m_tBuffer(0), m_texId(0), m_wrap_option(0), m_filter_option(0)
 {
+    std::cout << m_tpath[0];
     m_image.loadFromFile(texture_filename);
     if (m_tcoords.size() != m_positions.size()){
         m_tcoords.resize(m_positions.size(), glm::vec2(0.0));

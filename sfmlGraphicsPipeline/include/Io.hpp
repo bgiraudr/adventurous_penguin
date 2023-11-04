@@ -28,7 +28,8 @@ bool read_obj(
         std::vector<glm::vec3>& positions, 
         std::vector<unsigned int>& indices,
         std::vector<glm::vec3>& normals,
-        std::vector<glm::vec2>& texcoords
+        std::vector<glm::vec2>& texcoords,
+        std::vector<std::string>& texpath
         );
 
 #endif //IO_HPP

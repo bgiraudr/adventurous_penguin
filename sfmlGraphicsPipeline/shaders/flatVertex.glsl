@@ -20,5 +20,5 @@ void main()
 {
     gl_Position = projMat*viewMat*modelMat*vec4(vPosition, 1.0f);
     surfel_color = vec4(mapVec(vNormal,-1,0,1,1),1.0f);
-    //surfel_color = vColor;
+    // surfel_color = vColor;
 }

@@ -17,6 +17,10 @@ class MeshRenderable : public KeyframedHierarchicalRenderable
                        const std::string & mesh_filename);
 
         MeshRenderable(ShaderProgramPtr program,
+                       const std::string & mesh_filename,
+                       const  glm::vec4 &colors);
+
+        MeshRenderable(ShaderProgramPtr program,
                        const std::vector< glm::vec3 > & positions,
                        const std::vector< unsigned int > & indices, 
                        const std::vector< glm::vec3 > & normals,
@@ -44,6 +48,7 @@ class MeshRenderable : public KeyframedHierarchicalRenderable
         std::vector< unsigned int > m_indices;
         bool m_indexed;
         std::vector< glm::vec2 > m_tcoords;
+        std::vector< std::string > m_tpath;
         
         unsigned int m_pBuffer;
         unsigned int m_cBuffer;
