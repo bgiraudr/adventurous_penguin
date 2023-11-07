@@ -57,6 +57,15 @@ void initialize_scene(Viewer& viewer) {
 	FrameRenderablePtr frame = std::make_shared<FrameRenderable>(flatShader);
 	viewer.addRenderable(frame);
 
+	Camera& camera = viewer.getCamera();
+	float t = 3;
+	glm::vec3 forward = glm::vec3(0, 0, -1); // In OpenGL, the camera's forward axis is -z
+	camera.addGlobalTransformKeyframe(lookAtModel(glm::vec3(-t,t,-t), glm::vec3(0,0,0), forward), 0 );
+	camera.addGlobalTransformKeyframe(lookAtModel(glm::vec3(-t,t,t), glm::vec3(0,5,0), forward), 2 );
+	camera.addGlobalTransformKeyframe(lookAtModel(glm::vec3(t,t,t), glm::vec3(0,0,6), forward), 4);
+	camera.addGlobalTransformKeyframe(lookAtModel(glm::vec3(t,t,-t), glm::vec3(-3,0,0), forward), 6);
+	camera.addGlobalTransformKeyframe(lookAtModel(glm::vec3(-t,t,-t), glm::vec3(0,0,0), forward), 8);
+
 	/*LIGHTS*/
 
 	glm::mat4 globalTransformation, localTransformation;
@@ -137,29 +146,43 @@ void initialize_scene(Viewer& viewer) {
 	float mShininess=1;
 	MaterialPtr myMaterial = std::make_shared<Material>(mAmbient, mDiffuse, mSpecular, mShininess);
 
+	MaterialPtr iceMaterial = std::make_shared<Material>(glm::vec3(0.7,0.8,1.0), glm::vec3(0.7,0.8,1.0), glm::vec3(10), 50);
+	MaterialPtr simpleMaterial = std::make_shared<Material>(glm::vec3(0.8), glm::vec3(0.6), glm::vec3(0.3), 10);
+
 	/*OBJECTS*/
-	
-	auto iceberg = createTexturedLightedObj(texShader, "iceberg.obj", "iceberg.png", myMaterial);
-	iceberg -> setGlobalTransform(getScaleMatrix(0.1f, 0.1f, 0.1f));
 
-	auto boat = createTexturedLightedObj(texShader, "boat6.obj", "boat2.png", myMaterial);
+	auto boat = createTexturedLightedObj(texShader, "boat6.obj", "boat2.png", simpleMaterial);
 	boat -> setGlobalTransform(getTranslationMatrix(0,-1,5) * getScaleMatrix(0.15f, 0.15f, 0.15f) * getRotationMatrix(M_PI, glm::vec3(0,1,0)));
+	boat->addLocalTransformKeyframe(getTranslationMatrix(0,-1,5), 0);
+	boat->addLocalTransformKeyframe(getTranslationMatrix(0,-1,100) * getRotationMatrix(M_PI/8, glm::vec3(0,0,1)), 3);
+	boat->addLocalTransformKeyframe(getTranslationMatrix(0,-1,5), 6);
 
-	auto pengouin = createTexturedLightedObj(texShader, "pengouin.obj", "pengouin.png", myMaterial);
+	auto pengouin = createTexturedLightedObj(texShader, "pengouin.obj", "pengouin.png", simpleMaterial);
 	pengouin -> setGlobalTransform(getTranslationMatrix(0,2,4) * getScaleMatrix(0.1f, 0.1f, 0.1f));
 
 	auto seal = createTexturedLightedObj(texShader, "seal.obj", "seal.png", myMaterial);
 	seal -> setGlobalTransform(getTranslationMatrix(0.5,0.6,-1) * getScaleMatrix(0.05f));
 
 	auto waterPlane = std::make_shared<TexturedPlaneRenderable>(texShader, TEXTURE_PATH + "ocean.gif");
-	waterPlane->setGlobalTransform(getRotationMatrix(M_PI/2, glm::vec3(1,0,0)) * getScaleMatrix(20));
+	waterPlane->setGlobalTransform(getRotationMatrix(M_PI/2, glm::vec3(1,0,0)) * getScaleMatrix(200));
+	waterPlane->setWrapOption(2);
+
+	auto icebergs = createTexturedLightedObj(texShader, "hills.obj", "iceberg.png", iceMaterial);
+	icebergs->setGlobalTransform(getTranslationMatrix(0,-3.5,0) * getScaleMatrix(20));
+	icebergs->setWrapOption(2);
+
+	auto hills = createTexturedLightedObj(texShader, "hills.obj", "hills.png", myMaterial);
+	hills->setGlobalTransform(getTranslationMatrix(0,-6,-40) * getScaleMatrix(40));
+
 	
+
 	/*ADD RENDERABLES*/
-	viewer.addRenderable(iceberg);
 	viewer.addRenderable(boat);
 	viewer.addRenderable(pengouin);
 	viewer.addRenderable(seal);
 	viewer.addRenderable(waterPlane);
+	viewer.addRenderable(icebergs);
+	viewer.addRenderable(hills);
 
 	/*START ANIMATION*/
 	viewer.startAnimation();

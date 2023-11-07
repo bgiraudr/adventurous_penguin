@@ -253,3 +253,8 @@ void TexturedMeshRenderable::do_keyPressedEvent( sf::Event& e )
 
     updateTextureOption();
 }
+
+void TexturedMeshRenderable::setWrapOption(int id) {
+    m_wrap_option = id;
+    updateTextureOption();
+}

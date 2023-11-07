@@ -1,0 +1,13 @@
+# Blender 3.6.5 MTL File: 'None'
+# www.blender.org
+
+newmtl Hills
+Ns 159.999985
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd Hills_baseColor.png
+map_Ke Hills_baseColor.png
+map_Bump -bm 1.000000 Hills_normal.png

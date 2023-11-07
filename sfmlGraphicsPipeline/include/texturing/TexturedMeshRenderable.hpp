@@ -38,6 +38,16 @@ class TexturedMeshRenderable : public MeshRenderable
     void update_texture_buffer();
     void update_tcoords_buffer();
     void update_all_buffers();
+    /**
+     * @brief set wrap option (m_wrap_option) on the textured renderable
+     * @param id id of the wrap option 
+     * 0 - GL_CLAMP_TO_EDGE |
+     * 1 - GL_REPEAT |
+     * 2 - GL_MIRRORED_REPEAT |
+     * 3 - GL_CLAMP_TO_EDGE |
+     * 4 - GL_CLAMP_TO_BORDER
+    */
+    void setWrapOption(int id);
     
     protected:
         TexturedMeshRenderable(ShaderProgramPtr shaderProgram, bool indexed);
