@@ -107,7 +107,7 @@ void initialize_scene(Viewer& viewer) {
 	pointLightRenderable2->setLocalTransform(localTransformation);
 	viewer.addPointLight(pointLight2);
 	viewer.addRenderable(pointLightRenderable2);
-	/*
+	
 	//Define a spot light
 	glm::vec3 s_position(0.0,5.0,-8.0), s_spotDirection = glm::normalize(glm::vec3(0.0,-1.0,1.0));
 	//glm::vec3 s_ambient(0.0,0.0,0.0), s_diffuse(0.0,0.0,0.0), s_specular(0.0,0.0,0.0);
@@ -129,7 +129,7 @@ void initialize_scene(Viewer& viewer) {
 
 	spotLightRenderable->setLocalTransform(localTransformation);
 	viewer.addSpotLight(spotLight);
-	viewer.addRenderable(spotLightRenderable);*/
+	viewer.addRenderable(spotLightRenderable);
 
 	/*MATERIALS*/
 
@@ -148,6 +148,9 @@ void initialize_scene(Viewer& viewer) {
 	auto pengouin = createTexturedLightedObj(texShader, "pengouin.obj", "pengouin.png", myMaterial);
 	pengouin -> setGlobalTransform(getTranslationMatrix(0,2,4) * getScaleMatrix(0.1f, 0.1f, 0.1f));
 
+	auto seal = createTexturedLightedObj(texShader, "seal.obj", "seal.png", myMaterial);
+	seal -> setGlobalTransform(getTranslationMatrix(0.5,0.6,-1) * getScaleMatrix(0.05f));
+
 	auto waterPlane = std::make_shared<TexturedPlaneRenderable>(texShader, TEXTURE_PATH + "ocean.gif");
 	waterPlane->setGlobalTransform(getRotationMatrix(M_PI/2, glm::vec3(1,0,0)) * getScaleMatrix(20));
 	
@@ -155,6 +158,7 @@ void initialize_scene(Viewer& viewer) {
 	viewer.addRenderable(iceberg);
 	viewer.addRenderable(boat);
 	viewer.addRenderable(pengouin);
+	viewer.addRenderable(seal);
 	viewer.addRenderable(waterPlane);
 
 	/*START ANIMATION*/
