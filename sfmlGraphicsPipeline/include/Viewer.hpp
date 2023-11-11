@@ -274,6 +274,8 @@ private:
      */
     void mouseMoveEvent(sf::Event& e);
 
+    void printViewMatrix();
+
 
     Camera m_camera; /*!< Camera used to render the scene in the Viewer. */
     sf::RenderWindow m_window; /*!< Pointer to the render window. */

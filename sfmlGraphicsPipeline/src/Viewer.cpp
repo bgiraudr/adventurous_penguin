@@ -275,10 +275,27 @@ void Viewer::addRenderable(const RenderablePtr & r)
     m_renderables.insert(r);
 }
 
+void Viewer::printViewMatrix() {
+    const float* matrixData = glm::value_ptr(m_camera.viewMatrix());
+        std::cout << "glm::mat4({";
+        for (int i = 0; i < 16; ++i) {
+            std::cout << matrixData[i];
+            if (i < 15) {
+                std::cout << ", ";
+            }
+        }
+        std::cout << "})" << std::endl;
+}
+
 void Viewer::keyPressedEvent(sf::Event& e)
 {
     switch (e.key.code)
     {
+    case sf::Keyboard::E:
+        LOG(info, "Caméra position is");
+        LOG(info, m_camera.getPosition());
+        printViewMatrix();
+        break;
     case sf::Keyboard::C:   
         changeCameraMode();
         break;

@@ -258,3 +258,10 @@ void TexturedMeshRenderable::setWrapOption(int id) {
     m_wrap_option = id;
     updateTextureOption();
 }
+
+void TexturedMeshRenderable::setImage(std::string img) {
+    m_image.loadFromFile(img);
+    m_image.flipVertically();
+    update_buffers();
+    updateTextureOption();
+}

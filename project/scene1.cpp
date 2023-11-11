@@ -36,6 +36,10 @@ void setCameraPosition(Viewer& viewer, glm::vec3 initPos,  glm::vec3 lookAt) {
 	viewer.getCamera().setViewMatrix(glm::lookAt(initPos, lookAt, glm::vec3(0, 1, 0)));
 }
 
+void setCameraPosition(Viewer& viewer, glm::mat4 viewMatrix) {
+	viewer.getCamera().setViewMatrix(viewMatrix);
+}
+
 void addCubeMap(Viewer& viewer, std::string texture) {
 	ShaderProgramPtr cubeMapShader = addShader(viewer, "cubeMap");
 	std::string cubemap_dir = "../../sfmlGraphicsPipeline/textures/"+texture;
@@ -47,7 +51,9 @@ std::shared_ptr<TexturedLightedMeshRenderable> createTexturedLightedObj(ShaderPr
 	return std::make_shared<TexturedLightedMeshRenderable>(shader, MESHES_PATH + obj, material, TEXTURE_PATH + texture);
 }
 
-void initialize_scene(Viewer& viewer) {
+int main() {
+	Viewer viewer(1280,720, glm::vec4(0.8, 0.8, 0.8, 1.0));
+	
 	/*SHADERS*/
 	ShaderProgramPtr flatShader = addShader(viewer, "flat");
 	ShaderProgramPtr texShader = addShader(viewer, "texture");
@@ -57,14 +63,14 @@ void initialize_scene(Viewer& viewer) {
 	FrameRenderablePtr frame = std::make_shared<FrameRenderable>(flatShader);
 	viewer.addRenderable(frame);
 
-	Camera& camera = viewer.getCamera();
-	float t = 3;
-	glm::vec3 forward = glm::vec3(0, 0, -1); // In OpenGL, the camera's forward axis is -z
-	camera.addGlobalTransformKeyframe(lookAtModel(glm::vec3(-t,t,-t), glm::vec3(0,0,0), forward), 0 );
-	camera.addGlobalTransformKeyframe(lookAtModel(glm::vec3(-t,t,t), glm::vec3(0,5,0), forward), 2 );
-	camera.addGlobalTransformKeyframe(lookAtModel(glm::vec3(t,t,t), glm::vec3(0,0,6), forward), 4);
-	camera.addGlobalTransformKeyframe(lookAtModel(glm::vec3(t,t,-t), glm::vec3(-3,0,0), forward), 6);
-	camera.addGlobalTransformKeyframe(lookAtModel(glm::vec3(-t,t,-t), glm::vec3(0,0,0), forward), 8);
+	// Camera& camera = viewer.getCamera();
+	// float t = 3;
+	// glm::vec3 forward = glm::vec3(0, 0, -1); // In OpenGL, the camera's forward axis is -z
+	// camera.addGlobalTransformKeyframe(lookAtModel(glm::vec3(-t,t,-t), glm::vec3(0,0,0), forward), 0 );
+	// camera.addGlobalTransformKeyframe(lookAtModel(glm::vec3(-t,t,t), glm::vec3(0,5,0), forward), 2);
+	// camera.addGlobalTransformKeyframe(lookAtModel(glm::vec3(t,t,t), glm::vec3(0,0,6), forward), 4);
+	// camera.addGlobalTransformKeyframe(lookAtModel(glm::vec3(t,t,-t), glm::vec3(-3,0,0), forward), 6);
+	// camera.addGlobalTransformKeyframe(lookAtModel(glm::vec3(-t,t,-t), glm::vec3(0,0,0), forward), 8);
 
 	/*LIGHTS*/
 
@@ -160,12 +166,8 @@ void initialize_scene(Viewer& viewer) {
 	auto pengouin = createTexturedLightedObj(texShader, "pengouin.obj", "pengouin.png", simpleMaterial);
 	pengouin -> setGlobalTransform(getTranslationMatrix(0,2,4) * getScaleMatrix(0.1f, 0.1f, 0.1f));
 
-	auto seal = createTexturedLightedObj(texShader, "seal.obj", "seal.png", myMaterial);
+	auto seal = createTexturedLightedObj(texShader, "seal.obj", "seal.png", simpleMaterial);
 	seal -> setGlobalTransform(getTranslationMatrix(0.5,0.6,-1) * getScaleMatrix(0.05f));
-
-	auto waterPlane = std::make_shared<TexturedPlaneRenderable>(texShader, TEXTURE_PATH + "ocean.gif");
-	waterPlane->setGlobalTransform(getRotationMatrix(M_PI/2, glm::vec3(1,0,0)) * getScaleMatrix(200));
-	waterPlane->setWrapOption(2);
 
 	auto icebergs = createTexturedLightedObj(texShader, "hills.obj", "iceberg.png", iceMaterial);
 	icebergs->setGlobalTransform(getTranslationMatrix(0,-3.5,0) * getScaleMatrix(20));
@@ -174,7 +176,9 @@ void initialize_scene(Viewer& viewer) {
 	auto hills = createTexturedLightedObj(texShader, "hills.obj", "hills.png", myMaterial);
 	hills->setGlobalTransform(getTranslationMatrix(0,-6,-40) * getScaleMatrix(40));
 
-	
+	auto waterPlane = std::make_shared<TexturedPlaneRenderable>(texShader, TEXTURE_PATH + "ocean/0.png");
+	waterPlane->setGlobalTransform(getRotationMatrix(M_PI/2, glm::vec3(1,0,0)) * getScaleMatrix(200));
+	waterPlane->setWrapOption(2);
 
 	/*ADD RENDERABLES*/
 	viewer.addRenderable(boat);
@@ -186,17 +190,17 @@ void initialize_scene(Viewer& viewer) {
 
 	/*START ANIMATION*/
 	viewer.startAnimation();
-}
 
-int main() {
-	Viewer viewer(1280,720, glm::vec4(0.8, 0.8, 0.8, 1.0));
-	initialize_scene(viewer);
-	setCameraPosition(viewer, glm::vec3(1,1,1), glm::vec3(0,0,0));
+	// setCameraPosition(viewer, glm::vec3(-1.4,2.3,12.3), glm::vec3(11,2,-3));
+	setCameraPosition(viewer, glm::mat4({-0.292907, -0.0145636, 0.95603, -0, -0, 0.999884, 0.0152316, 0, -0.956141, 0.00446145, -0.292873, -0, -2.70746, -3.32731, -16.0776, 1}));
 	addCubeMap(viewer, "skybox2");
-
 	while( viewer.isRunning()) {
 		viewer.handleEvent();
 		viewer.animate();
+
+		int imageNumber = static_cast<int>(viewer.getTime()/2 * 20) % 20;
+		waterPlane->setImage(TEXTURE_PATH + "ocean/"+std::to_string(imageNumber)+".png");
+
 		viewer.draw();
 		viewer.display();
 	}	

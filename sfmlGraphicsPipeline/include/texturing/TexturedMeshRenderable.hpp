@@ -48,6 +48,7 @@ class TexturedMeshRenderable : public MeshRenderable
      * 4 - GL_CLAMP_TO_BORDER
     */
     void setWrapOption(int id);
+    void setImage(std::string img);
     
     protected:
         TexturedMeshRenderable(ShaderProgramPtr shaderProgram, bool indexed);
