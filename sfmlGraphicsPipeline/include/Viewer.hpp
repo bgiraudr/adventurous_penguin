@@ -144,6 +144,7 @@ public:
      * Access to the camera used to render the scene in the viewer.
      * @return A reference to the viewer's camera. */
     Camera& getCamera();
+    void setKeyboardSpeed(float speed);
 
     /**@brief Get the world coordinate of a window point.
      *

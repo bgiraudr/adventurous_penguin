@@ -674,3 +674,7 @@ const glm::vec4 & Viewer::getBackgroundColor() const
     //m_modeInformationText = text;
     //m_modeInformationTextDisappearanceTime = clock::now() + duration;
 //}
+
+void Viewer::setKeyboardSpeed(float speed) {
+    m_keyboard.speed = speed;
+}
