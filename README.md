@@ -15,13 +15,14 @@ cmake ..
 make {scene}
 ./{scene}
 ```
+Need to rebuild the sfmlGraphicsPipeline every time a texture, object or shader is added.
+Need to rebuild the project scenes every once the cpp associated is changed.
 
 Or you can use the makefile at the root of the project.
 
 ```bash
-make init
+make rebuild
 make TARGET={SCENE_TO_COMPILE}
 ```
 
-Need to rebuild the sfmlGraphicsPipeline every time a texture, object or shader is added.
-Need to rebuild the project scenes every once the cpp associated is changed.
+Need to rebuild option every time a scene is added
