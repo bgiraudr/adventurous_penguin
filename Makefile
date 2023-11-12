@@ -7,7 +7,7 @@ compile:
 	make -C $(PROJECT_DIR)/build $(TARGET)
 	cd $(PROJECT_DIR)/build ; ./$(TARGET)
 
-init:
+rebuild:
 	mkdir -p $(SFML_DIR)/build
 	cd $(SFML_DIR)/build ; cmake ..
 	mkdir -p $(PROJECT_DIR)/build
