@@ -69,7 +69,7 @@ int main() {
 
 	//Define a directional light for the whole scene
 	glm::vec3 d_direction = glm::normalize(glm::vec3(1.0,-1.0,0.0));
-	glm::vec3 d_ambient(0.4,0.4,0.4), d_diffuse(0.3,0.3,0.3), d_specular(0.5,0.5,0.5);
+	glm::vec3 d_ambient(1.0,1.0,1.0), d_diffuse(0.3,0.3,0.3), d_specular(0.5,0.5,0.5);
 	
 	glm::vec3 lightPosition(-12,15,-10);
 	DirectionalLightPtr directionalLight = std::make_shared<DirectionalLight>(d_direction, d_ambient, d_diffuse, d_specular);
@@ -127,10 +127,10 @@ int main() {
 	/*CAMERA*/
 	Camera& camera = viewer.getCamera();
 	glm::vec3 forward = glm::vec3(0, 0, -1); // In OpenGL, the camera's forward axis is -z
-	camera.addGlobalTransformKeyframe(lookAtModel(glm::vec3(-2.1,6,12.9), glm::vec3(-0.2,7,10), forward), 0);
-	camera.addGlobalTransformKeyframe(lookAtModel(glm::vec3(-2.1,4,12.9), glm::vec3(-0.2,1,10), forward), 3.5);
-	camera.addGlobalTransformKeyframe(lookAtModel(glm::vec3(-0,0.6,17.3), glm::vec3(0.5,0.29,16.3), forward), 3.51);
-	camera.addGlobalTransformKeyframe(lookAtModel(glm::vec3(-0,0.6,17.3), glm::vec3(0.5,0.29,16.3), forward), 6);
+	// camera.addGlobalTransformKeyframe(lookAtModel(glm::vec3(-2.1,6,12.9), glm::vec3(-0.2,7,10), forward), 0);
+	// camera.addGlobalTransformKeyframe(lookAtModel(glm::vec3(-2.1,4,12.9), glm::vec3(-0.2,1,10), forward), 3.5);
+	// camera.addGlobalTransformKeyframe(lookAtModel(glm::vec3(-0,0.6,17.3), glm::vec3(0.5,0.29,16.3), forward), 3.51);
+	// camera.addGlobalTransformKeyframe(lookAtModel(glm::vec3(-0,0.6,17.3), glm::vec3(0.5,0.29,16.3), forward), 6);
 	
 	addCubeMap(viewer, "skybox");
 	while( viewer.isRunning()) {

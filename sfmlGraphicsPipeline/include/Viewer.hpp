@@ -145,6 +145,7 @@ public:
      * @return A reference to the viewer's camera. */
     Camera& getCamera();
     void setKeyboardSpeed(float speed);
+    void setSimulationTime(float time);
 
     /**@brief Get the world coordinate of a window point.
      *
@@ -298,6 +299,7 @@ private:
     bool m_animationIsStarted; /*!< True if the animation is running. False otherwise. */
     float m_loopDuration; /*!< Duration of the animation loop in seconds. */
     float m_simulationTime; /*!< Current simulation time in the animation loop. */
+    float m_initSimulationTime;
     TimePoint m_lastSimulationTimePoint; /*!< Date of the last simulation. */
     glm::vec4 m_background_color;
 

@@ -56,7 +56,7 @@ Viewer::Viewer(float width, float height, const glm::vec4 & background_color) :
     m_loopDuration{120}, m_simulationTime{0},
     m_screenshotCounter{0}, m_helpDisplayed{false}, m_helpDisplayRequest{false},
     m_lastEventHandleTime{ clock::now() },
-    m_background_color{background_color}   
+    m_background_color{background_color}, m_initSimulationTime{0}
 {   
     sf::ContextSettings settings = m_window.getSettings();
     LOG( info, "Settings of OPENGL Context created by SFML");
@@ -264,7 +264,7 @@ void Viewer::stopAnimation()
 void Viewer::resetAnimation()
 {
     m_lastSimulationTimePoint = clock::now();
-    m_simulationTime = 0;
+    m_simulationTime = m_initSimulationTime;
 }
 
 
@@ -294,6 +294,7 @@ void Viewer::keyPressedEvent(sf::Event& e)
     case sf::Keyboard::E:
         LOG(info, "Caméra position is");
         LOG(info, m_camera.getPosition());
+        LOG(info, m_simulationTime);
         printViewMatrix();
         break;
     case sf::Keyboard::C:   
@@ -677,4 +678,9 @@ const glm::vec4 & Viewer::getBackgroundColor() const
 
 void Viewer::setKeyboardSpeed(float speed) {
     m_keyboard.speed = speed;
+}
+
+void Viewer::setSimulationTime(float time) {
+    m_simulationTime = time;
+    m_initSimulationTime = time;
 }
