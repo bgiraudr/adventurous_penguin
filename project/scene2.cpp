@@ -85,7 +85,7 @@ int main() {
 	//Define a spot light
 	glm::vec3 s_position(9,2.0,-2.0), s_spotDirection = glm::vec3(5,0,-1);
 	//glm::vec3 s_ambient(0.0,0.0,0.0), s_diffuse(0.0,0.0,0.0), s_specular(0.0,0.0,0.0);
-	glm::vec3 s_ambient(0.0,0.0,0.0), s_diffuse(0.7,0.7,0.7), s_specular(1.0,1.0,1.0);
+	glm::vec3 s_ambient(0.0,0.0,0.05), s_diffuse(0.7,0.7,0.7), s_specular(1.0,1.0,1.0);
 	float s_constant=1.0, s_linear=0.0, s_quadratic=0.0;
 	float s_innerCutOff=std::cos(glm::radians(10.0f)), s_outerCutOff=std::cos(glm::radians(20.0f));
 	SpotLightPtr spotLight = std::make_shared<SpotLight>(s_position, s_spotDirection,
@@ -214,8 +214,6 @@ int main() {
 	camera.addGlobalTransformKeyframe(lookAtModel(glm::vec3(5,1.2,-35.5), glm::vec3(5,1.2,-50), forward) * getRotationMatrix(M_PI/16, glm::vec3(0,0,1)) * getRotationMatrix(M_PI/2.2, glm::vec3(0,1,0)), 13.8);
 	camera.addGlobalTransformKeyframe(lookAtModel(glm::vec3(5,1.2,-39.6), glm::vec3(5,1.2,-50), forward) * getRotationMatrix(M_PI/16, glm::vec3(0,0,1)) * getRotationMatrix(0, glm::vec3(0,1,0)), 15);
 	camera.addGlobalTransformKeyframe(lookAtModel(glm::vec3(5,1.2,-52), glm::vec3(5,1.2,-80), forward) * getRotationMatrix(M_PI/16, glm::vec3(0,0,1)) * getRotationMatrix(0, glm::vec3(0,1,0)), 19);
-
-
 
 	//[   -2.707,   -3.327,  -16.078]
 	// glm::mat4({-0.292907, -1.30385e-08, -0.956141,  0, -0.0145636, 0.999884, 0.00446144, 0,   0.95603,  0.0152316, -0.292873, -0,  14.5292,  3.57181, -7.28257, 1})
