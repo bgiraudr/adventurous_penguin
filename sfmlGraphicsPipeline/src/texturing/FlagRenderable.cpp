@@ -15,7 +15,11 @@ FlagRenderable::FlagRenderable(ShaderProgramPtr program,
     getFabric(width, height, horizontal_resolution, vertical_resolution, m_particles, m_springs, m_positions, indices, m_tcoords, stiffness, damping);
     for (int j = 0 ; j < vertical_resolution ; ++j){
         m_particles[j]->setFixed(true);
+        m_particles[j+(horizontal_resolution-1)*vertical_resolution]->setFixed(true);
     }
+
+    // m_particles[2+4*14]->setFixed(true);
+
     unpack(indices, m_indices);
     
     m_image.loadFromFile(texture_filename);

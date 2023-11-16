@@ -919,3 +919,7 @@ void getFabric(float width, float height, int horizontal_resolution, int vertica
         }
     }
 }
+
+float degToRad(float deg) {
+    return deg * (M_PI / 180);
+}

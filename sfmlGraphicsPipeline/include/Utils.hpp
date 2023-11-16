@@ -192,4 +192,6 @@ void getFabric(float width, float height, int horizontal_resolution, int vertica
     float stiffness,
     float spring_damping);
 
+float degToRad(float deg);
+
 #endif //UTILS

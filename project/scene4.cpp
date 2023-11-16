@@ -155,7 +155,7 @@ int main()
 	Camera &camera = viewer.getCamera();
     system->setDt(8e-4);
 
-	setCameraPosition(viewer, glm::mat4({0.996051, -0.0265845, 0.0847113, -0, 1.86265e-09, 0.95412, 0.299426, -0, -0.0887847, -0.298244, 0.950352, -0, -0.117166, -1.09141, 0.445884, 1}));
+	setCameraPosition(viewer, glm::mat4({0.996051, -0.0265845, 0.0847113, -0, 1.86265e-09, 0.95412, 0.299426, -0, -0.0887847, -0.298244, 0.950352, -0, -0.117174, -0.429864, -1.66233, 1}));
 	viewer.setKeyboardSpeed(6);
 	viewer.setSimulationTime(0);
 	addCubeMap(viewer, "skybox");
@@ -184,7 +184,7 @@ void createFlag(Viewer& viewer, DynamicSystemPtr& system, DynamicSystemRenderabl
     viewer.addShaderProgram( instancedShader );
     viewer.addShaderProgram( textureShader );
 
-    std::string texture_path = "../../sfmlGraphicsPipeline/textures/boat.png";
+    std::string texture_path = "../../sfmlGraphicsPipeline/textures/flag.jpg";
     auto flag = std::make_shared<FlagRenderable>(textureShader,
         1.5f, 1.0, 15, 10, 10e3, 1, texture_path);
 
@@ -194,15 +194,25 @@ void createFlag(Viewer& viewer, DynamicSystemPtr& system, DynamicSystemRenderabl
         system->addForceField(force_field);
 
     //Add it to the system as a force field
-    ConstantForceFieldPtr gravityForceField = std::make_shared<ConstantForceField>(system->getParticles(), DynamicSystem::gravity  );
-    system->addForceField( gravityForceField );
-    ConstantForceFieldPtr windForceField = std::make_shared<ConstantForceField>(system->getParticles(), glm::vec3(3.0, 20.0, 5.0));
-    system->addForceField( windForceField );
+    ConstantForceFieldPtr gravityForceField = std::make_shared<ConstantForceField>(system->getParticles(), DynamicSystem::gravity);
+    system->addForceField(gravityForceField);
+    ConstantForceFieldPtr windForceField = std::make_shared<ConstantForceField>(system->getParticles(), glm::vec3(0.0, 2.0, 10.0));
+    system->addForceField(windForceField);
 
     //Initialize a force field that apply to all the particles of the system to simulate vicosity (air friction)
     float dampingCoefficient = 1.0;
     DampingForceFieldPtr dampingForceField = std::make_shared<DampingForceField>(system->getParticles(), dampingCoefficient);
     system->addForceField(dampingForceField);
+
+	flag->setGlobalTransform(getRotationMatrix(M_PI/2, glm::vec3(1,0,0)));
+
+	 //Create a springListRenderable to efficiently visualize the springs of the system
+    SpringListRenderablePtr springsRenderable = std::make_shared<SpringListRenderable>(flatShader, flag->getSprings());
+    HierarchicalRenderable::addChild( systemRenderable, springsRenderable );
+
+    //Create a particleListRenderable to efficiently visualize the particles of the system
+    ParticleListRenderablePtr particleListRenderable = std::make_shared<ParticleListRenderable>( instancedShader, flag->getParticles());
+    HierarchicalRenderable::addChild(systemRenderable, particleListRenderable);
 
     viewer.addRenderable(flag);
     viewer.stopAnimation();
