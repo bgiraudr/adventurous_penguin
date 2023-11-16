@@ -118,18 +118,18 @@ int main() {
 														 s_innerCutOff, s_outerCutOff);
 	SpotLightRenderablePtr spotLightRenderable = std::make_shared<SpotLightRenderable>(flatShader, spotLight);
 	localTransformation = glm::scale(glm::mat4(1.0), glm::vec3(0.5,0.5,0.5));
-	spotLightRenderable->setLocalTransform(localTransformation);
+	// spotLightRenderable->setLocalTransform(localTransformation);
 
 	viewer.addSpotLight(spotLight);
-	viewer.addRenderable(spotLightRenderable);
+	// viewer.addRenderable(spotLightRenderable);
 
-	// SpotLightPtr spotLight2 = std::make_shared<SpotLight>(glm::vec3(1.5,1.9,-9), glm::vec3(4,0.6,-8),
-	// 													 s_ambient, s_diffuse, s_specular,
-	// 													 s_constant, s_linear, s_quadratic,
-	// 													 s_innerCutOff, s_outerCutOff);
-	// SpotLightRenderablePtr spotLightRenderable2 = std::make_shared<SpotLightRenderable>(flatShader, spotLight2);
-	// spotLightRenderable->setLocalTransform(localTransformation);
-	// viewer.addSpotLight(spotLight2);
+	SpotLightPtr spotLight2 = std::make_shared<SpotLight>(glm::vec3(27,9.6,-7.5), glm::vec3(19.4,5,-2.8),
+														 s_ambient, s_diffuse, s_specular,
+														 s_constant, s_linear, s_quadratic,
+														 s_innerCutOff, s_outerCutOff);
+	SpotLightRenderablePtr spotLightRenderable2 = std::make_shared<SpotLightRenderable>(flatShader, spotLight2);
+	spotLightRenderable->setLocalTransform(localTransformation);
+	viewer.addSpotLight(spotLight2);
 	// viewer.addRenderable(spotLightRenderable2);
 
 	/*MATERIALS*/
@@ -162,7 +162,7 @@ int main() {
 	axe -> setGlobalTransform(getTranslationMatrix(10.4,5.25,-4.6) * getRotationMatrix(degToRad(-50), glm::vec3(1,0,0)));
 
 	auto snow = createTexturedLightedObj(texShader, "hills.obj", "snow.jpg", snowMaterial);
-	snow -> setGlobalTransform(getTranslationMatrix(0,3.2,0) * getScaleMatrix(50,3,50));
+	snow -> setGlobalTransform(getTranslationMatrix(0,3.2,0) * getScaleMatrix(60,5,60));
 	snow->setWrapOption(2);
 
 	auto snowHills = createTexturedLightedObj(texShader, "hills.obj", "snow.jpg", snowMaterial);
@@ -203,9 +203,10 @@ int main() {
 	HierarchicalRenderable::addChild(penguin, left_arm_penguin);
 
 	/*ADD RENDERABLES*/
-	viewer.addRenderable(penguin);
+	// viewer.addRenderable(penguin);
 	viewer.addRenderable(waterPlane);
 	viewer.addRenderable(snowPlatform);
+	viewer.addRenderable(snow);
 	viewer.addRenderable(axe);
 	viewer.addRenderable(snowHills);
 	viewer.addRenderable(house);
@@ -222,7 +223,16 @@ int main() {
 	Camera& camera = viewer.getCamera();
 	glm::vec3 forward = glm::vec3(0, 0, -1); // In OpenGL, the camera's forward axis is -z
 	
-	setCameraPosition(viewer, glm::mat4({0.254616, 0.0870552, 0.963116, -0, -1.86265e-09, 0.99594, -0.0900221, 0, -0.967042, 0.0229211, 0.253583, -0, -5.38636, -8.46124, -28.2959, 1}));
+	camera.addGlobalTransformKeyframe(lookAtModel(glm::vec3(27,4.6,1.8), glm::vec3(20,4.6,0), forward), 0);
+	camera.addGlobalTransformKeyframe(lookAtModel(glm::vec3(27,4.6,1.8), glm::vec3(20,4.6,0), forward), 3);
+	camera.addGlobalTransformKeyframe(lookAtModel(glm::vec3(21,9,0), glm::vec3(13.5,6,-4), forward), 5);
+	camera.addGlobalTransformKeyframe(lookAtModel(glm::vec3(14,8,-2.7), glm::vec3(10,6,-6.6), forward), 7);
+	camera.addGlobalTransformKeyframe(lookAtModel(glm::vec3(11,6,-8), glm::vec3(10,6,-6.6), forward), 10);
+	camera.addGlobalTransformKeyframe(lookAtModel(glm::vec3(9.8,6,-5), glm::vec3(7,6,-5.8), forward), 13);
+	camera.addGlobalTransformKeyframe(lookAtModel(glm::vec3(8.5,6,-5), glm::vec3(7,6,-5.8), forward), 14.5);
+	camera.addGlobalTransformKeyframe(lookAtModel(glm::vec3(8.5,6,-5), glm::vec3(7,6,-5.8), forward), 20);
+
+	// setCameraPosition(viewer, glm::mat4({0.254616, 0.0870552, 0.963116, -0, -1.86265e-09, 0.99594, -0.0900221, 0, -0.967042, 0.0229211, 0.253583, -0, -5.38636, -8.46124, -28.2959, 1}));
 	addCubeMap(viewer, "skybox");
 	viewer.setKeyboardSpeed(8);
 	viewer.setSimulationTime(0);
