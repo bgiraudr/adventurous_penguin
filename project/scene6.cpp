@@ -94,7 +94,7 @@ int main() {
 
 	//Define a directional light for the whole scene
 	glm::vec3 d_direction = glm::normalize(glm::vec3(1.0,-1.0,0.0));
-	glm::vec3 d_ambient(0.4,0.4,0.4), d_diffuse(0.4,0.4,0.4), d_specular(0.5,0.5,0.5);
+	glm::vec3 d_ambient(0.5,0.5,0.6), d_diffuse(0.4,0.4,0.4), d_specular(0.5,0.5,0.5);
 	
 	glm::vec3 lightPosition(-12,15,-10);
 	DirectionalLightPtr directionalLight = std::make_shared<DirectionalLight>(d_direction, d_ambient, d_diffuse, d_specular);
@@ -107,9 +107,9 @@ int main() {
 	viewer.addDirectionalLight(directionalLight);
 
 	//Define a spot light
-	glm::vec3 s_position(9,2.0,-2.0), s_spotDirection = glm::vec3(5,0,-1);
+	glm::vec3 s_position(9, 11.4, -15.5), s_spotDirection = glm::vec3(10,5,-7);
 	//glm::vec3 s_ambient(0.0,0.0,0.0), s_diffuse(0.0,0.0,0.0), s_specular(0.0,0.0,0.0);
-	glm::vec3 s_ambient(0.0,0.0,0.05), s_diffuse(0.7,0.7,0.7), s_specular(1.0,1.0,1.0);
+	glm::vec3 s_ambient(0.0,0.0,0.03), s_diffuse(0.7,0.7,0.8), s_specular(1.0,1.0,1.0);
 	float s_constant=1.0, s_linear=0.0, s_quadratic=0.0;
 	float s_innerCutOff=std::cos(glm::radians(10.0f)), s_outerCutOff=std::cos(glm::radians(20.0f));
 	SpotLightPtr spotLight = std::make_shared<SpotLight>(s_position, s_spotDirection,
@@ -121,15 +121,15 @@ int main() {
 	spotLightRenderable->setLocalTransform(localTransformation);
 
 	viewer.addSpotLight(spotLight);
-	// viewer.addRenderable(spotLightRenderable);
+	viewer.addRenderable(spotLightRenderable);
 
-	SpotLightPtr spotLight2 = std::make_shared<SpotLight>(glm::vec3(1.5,1.9,-9), glm::vec3(4,0.6,-8),
-														 s_ambient, s_diffuse, s_specular,
-														 s_constant, s_linear, s_quadratic,
-														 s_innerCutOff, s_outerCutOff);
-	SpotLightRenderablePtr spotLightRenderable2 = std::make_shared<SpotLightRenderable>(flatShader, spotLight2);
-	spotLightRenderable->setLocalTransform(localTransformation);
-	viewer.addSpotLight(spotLight2);
+	// SpotLightPtr spotLight2 = std::make_shared<SpotLight>(glm::vec3(1.5,1.9,-9), glm::vec3(4,0.6,-8),
+	// 													 s_ambient, s_diffuse, s_specular,
+	// 													 s_constant, s_linear, s_quadratic,
+	// 													 s_innerCutOff, s_outerCutOff);
+	// SpotLightRenderablePtr spotLightRenderable2 = std::make_shared<SpotLightRenderable>(flatShader, spotLight2);
+	// spotLightRenderable->setLocalTransform(localTransformation);
+	// viewer.addSpotLight(spotLight2);
 	// viewer.addRenderable(spotLightRenderable2);
 
 	/*MATERIALS*/
@@ -158,6 +158,9 @@ int main() {
 	auto house = createTexturedLightedObj(texShader, "house.obj", "house.png", simpleMaterial);
 	house -> setGlobalTransform(getTranslationMatrix(7,5.2,-8) * getRotationMatrix(degToRad(30), glm::vec3(0,1,0)));
 
+	auto axe = createTexturedLightedObj(texShader, "axe.obj", "axe.png", simpleMaterial);
+	axe -> setGlobalTransform(getTranslationMatrix(10.4,5.25,-4.6) * getRotationMatrix(degToRad(-50), glm::vec3(1,0,0)));
+
 	auto snow = createTexturedLightedObj(texShader, "hills.obj", "snow.jpg", snowMaterial);
 	snow -> setGlobalTransform(getTranslationMatrix(0,3.2,0) * getScaleMatrix(50,3,50));
 	snow->setWrapOption(2);
@@ -170,13 +173,16 @@ int main() {
 	snowPlatform -> setGlobalTransform(getTranslationMatrix(0,-2,-6) * getScaleMatrix(2));
 	snowPlatform->setWrapOption(2);
 
-	std::vector<glm::vec3> treePos = {glm::vec3(2.6,5,-14), glm::vec3(1.6,5,5.7), glm::vec3(-3.8,6,-3.8), glm::vec3(-2,6,-7.4), glm::vec3(9.4,2,14), glm::vec3(13,4,-14), glm::vec3(-6.7,6.7,-14), glm::vec3(-2,3.4,13), glm::vec3(-15.5,7.6,-3.7), glm::vec3(23.7,5,5)};
+	std::vector<glm::vec3> treePos = {glm::vec3(2.6,5,-14), glm::vec3(1.6,5,5.7), glm::vec3(-3.8,6,-3.8), glm::vec3(-2,6,-7.4), glm::vec3(9.4,2,14), glm::vec3(13,4,-14), glm::vec3(-6.7,6.7,-14), glm::vec3(-2,3.4,13), glm::vec3(-15.5,7.6,-3.7), glm::vec3(23.7,5,5), glm::vec3(11.3,5,-0.6)};
 	for (int i = 0; i < treePos.size(); i++) {
 		/* code */
 		auto sapin = createTexturedLightedObj(texShader, "sapin.obj", "sapin.png", simpleMaterial);
 		sapin -> setGlobalTransform(getTranslationMatrix(treePos[i]) * getScaleMatrix(1));
 		viewer.addRenderable(sapin);
 	}
+
+	auto mapPlane = std::make_shared<TexturedPlaneRenderable>(texShader, TEXTURE_PATH + "map.jpg");
+	mapPlane->setGlobalTransform(getTranslationMatrix(8,6,-5) * getRotationMatrix(degToRad(30), glm::vec3(0,1,0)) *getScaleMatrix(1, 0.7, 1));
 	
 
 	// for (int i = 0; i < 50; i++) {
@@ -200,9 +206,10 @@ int main() {
 	viewer.addRenderable(penguin);
 	viewer.addRenderable(waterPlane);
 	viewer.addRenderable(snowPlatform);
-	// viewer.addRenderable(snow);
+	viewer.addRenderable(axe);
 	viewer.addRenderable(snowHills);
 	viewer.addRenderable(house);
+	viewer.addRenderable(mapPlane);
 
 	createFlag(viewer, system, systemRenderable);
     system->setDt(8e-4);
@@ -215,9 +222,9 @@ int main() {
 	Camera& camera = viewer.getCamera();
 	glm::vec3 forward = glm::vec3(0, 0, -1); // In OpenGL, the camera's forward axis is -z
 	
-	// setCameraPosition(viewer, glm::mat4({0.254616, 0.0870552, 0.963116, -0, -1.86265e-09, 0.99594, -0.0900221, 0, -0.967042, 0.0229211, 0.253583, -0, -5.38636, -8.46124, -28.2959, 1}));
+	setCameraPosition(viewer, glm::mat4({0.254616, 0.0870552, 0.963116, -0, -1.86265e-09, 0.99594, -0.0900221, 0, -0.967042, 0.0229211, 0.253583, -0, -5.38636, -8.46124, -28.2959, 1}));
 	addCubeMap(viewer, "skybox");
-	viewer.setKeyboardSpeed(6);
+	viewer.setKeyboardSpeed(8);
 	viewer.setSimulationTime(0);
 
 	while( viewer.isRunning()) {
@@ -246,9 +253,9 @@ void createFlag(Viewer& viewer, DynamicSystemPtr& system, DynamicSystemRenderabl
     viewer.addShaderProgram( instancedShader );
     viewer.addShaderProgram( textureShader );
 
-    std::string texture_path = "../../sfmlGraphicsPipeline/textures/boat.png";
+    std::string texture_path = "../../sfmlGraphicsPipeline/textures/flag.jpg";
     auto flag = std::make_shared<FlagRenderable>(textureShader,
-        1.5f, 1.0, 15, 2, 10e3, 1, texture_path);
+        0.65f, 1.1f, 15, 10, 10e3, 1, texture_path);
 
     for (const ParticlePtr & particle : flag->getParticles())
         system->addParticle(particle);
@@ -258,13 +265,23 @@ void createFlag(Viewer& viewer, DynamicSystemPtr& system, DynamicSystemRenderabl
     //Add it to the system as a force field
     ConstantForceFieldPtr gravityForceField = std::make_shared<ConstantForceField>(system->getParticles(), DynamicSystem::gravity);
     system->addForceField(gravityForceField);
-    ConstantForceFieldPtr windForceField = std::make_shared<ConstantForceField>(system->getParticles(), glm::vec3(0.0, 20.0, 0.0));
+    ConstantForceFieldPtr windForceField = std::make_shared<ConstantForceField>(system->getParticles(), glm::vec3(0.0, 2.0, 10.0));
     system->addForceField(windForceField);
 
     //Initialize a force field that apply to all the particles of the system to simulate vicosity (air friction)
     float dampingCoefficient = 1.0;
     DampingForceFieldPtr dampingForceField = std::make_shared<DampingForceField>(system->getParticles(), dampingCoefficient);
     system->addForceField(dampingForceField);
+
+	flag->setGlobalTransform(getTranslationMatrix(10,7.1,-6.1) * getRotationMatrix(M_PI/2, glm::vec3(1,0,0)) * getRotationMatrix(degToRad(60), glm::vec3(0,0,1)) * getScaleMatrix(3));
+
+	 //Create a springListRenderable to efficiently visualize the springs of the system
+    // SpringListRenderablePtr springsRenderable = std::make_shared<SpringListRenderable>(flatShader, flag->getSprings());
+    // HierarchicalRenderable::addChild( systemRenderable, springsRenderable );
+
+    // //Create a particleListRenderable to efficiently visualize the particles of the system
+    // ParticleListRenderablePtr particleListRenderable = std::make_shared<ParticleListRenderable>( instancedShader, flag->getParticles());
+    // HierarchicalRenderable::addChild(systemRenderable, particleListRenderable);
 
     viewer.addRenderable(flag);
     viewer.stopAnimation();
