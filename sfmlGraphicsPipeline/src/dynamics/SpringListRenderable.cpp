@@ -8,7 +8,7 @@
 SpringListRenderable::~SpringListRenderable()
 {}
 
-SpringListRenderable::SpringListRenderable(ShaderProgramPtr shaderProgram, std::list<SpringForceFieldPtr>& springForceFields) :
+SpringListRenderable::SpringListRenderable(ShaderProgramPtr shaderProgram, const std::vector <SpringForceFieldPtr>& springForceFields) :
     MeshRenderable(shaderProgram, false),
     m_springForceFields(springForceFields)
 {

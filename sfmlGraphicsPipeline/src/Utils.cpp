@@ -6,6 +6,7 @@
 #include <glm/gtx/color_space.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include "dynamics/SpringForceField.hpp"
 
 using namespace std;
 
@@ -827,4 +828,94 @@ glm::mat4 lookAtUp(const glm::vec3 & position, const glm::vec3 & target)
 glm::mat4 lookAtUpModel(const glm::vec3 & position, const glm::vec3 & target)
 {
     return glm::inverse(lookAtUp(position, target));
+}
+
+void getFabric(float width, float height, int horizontal_resolution, int vertical_resolution,
+    std::vector<ParticlePtr> & particles,
+    std::vector<SpringForceFieldPtr> & springs,
+    std::vector<glm::vec3> & positions,
+    std::vector<glm::uvec3> & indices,
+    std::vector<glm::vec2> & tcoords,
+    float stiffness,
+    float damping)
+{
+    particles.resize(0);
+    springs.resize(0);
+    positions.resize(0);
+    tcoords.resize(0);
+    indices.resize(0);
+    float mass = 1.0f; // does not matter much
+    float radius = 0.01; // does not matter at all
+
+    // Make particles and vertices
+    for (size_t i = 0 ; i < horizontal_resolution ; ++i){
+        for (size_t j = 0 ; j < vertical_resolution ; ++j){
+            glm::vec2 uv = glm::vec2((float)i/(horizontal_resolution-1), (float)j/(vertical_resolution-1));
+            tcoords.push_back(uv);
+            glm::vec3 pos = glm::vec3(uv.x * width, uv.y * height, 0.0);
+            positions.push_back(pos);
+            ParticlePtr particle = std::make_shared<Particle>(pos, glm::vec3(0), mass, radius);
+            particles.push_back(particle);
+        }
+    }
+    // Make springs and triangles
+    for (int i = 0 ; i < horizontal_resolution ; ++i){
+        for (int j = 0 ; j < vertical_resolution ; ++j){
+    
+            int index = i * vertical_resolution + j;
+            int index_right = (i+1) * vertical_resolution + j;
+            int index_left = (i-1) * vertical_resolution + j;
+            int index_up = i * vertical_resolution + j - 1;
+            int index_bottom = i * vertical_resolution + j + 1;
+            int index_right_up = (i+1) * vertical_resolution + j - 1;
+            int index_left_up = (i-1) * vertical_resolution + j - 1;
+            int index_right_bottom = (i+1) * vertical_resolution + j + 1;
+            int index_left_bottom = (i-1) * vertical_resolution + j + 1;
+            bool left_border = i == 0;
+            bool right_border = i == horizontal_resolution - 1;
+            bool top_border = j == 0;
+            bool bottom_border = j == vertical_resolution - 1;
+
+            // Springs
+            // connect each particle to 4 neighbors such that each particle is connected to its 8 neighbors in the end
+            ParticlePtr particle = particles[index];
+            // connection with top right particle
+            
+            if (!top_border && ! right_border){
+                ParticlePtr top_right_particle = particles[index_right_up];
+                float distance = glm::distance(particle->getPosition(), top_right_particle->getPosition());
+                SpringForceFieldPtr spring = std::make_shared<SpringForceField>(particle, top_right_particle, stiffness, distance, damping);
+                springs.push_back(spring);
+            }
+            // connection with right particle
+            if (!right_border){
+                ParticlePtr right_particle = particles[index_right];
+                float distance = glm::distance(particle->getPosition(), right_particle->getPosition());
+                SpringForceFieldPtr spring = std::make_shared<SpringForceField>(particle, right_particle, stiffness, distance, damping);
+                springs.push_back(spring);
+            }
+            // connection with bottom right particle
+            if (!bottom_border && !right_border){
+                ParticlePtr bottom_right_particle = particles[index_right_bottom];
+                float distance = glm::distance(particle->getPosition(), bottom_right_particle->getPosition());
+                SpringForceFieldPtr spring = std::make_shared<SpringForceField>(particle, bottom_right_particle, stiffness, distance, damping);
+                springs.push_back(spring);
+            }
+            // connection with bottom particle
+            if (!bottom_border){
+                ParticlePtr bottom_particle = particles[index_bottom];
+                float distance = glm::distance(particle->getPosition(), bottom_particle->getPosition());
+                SpringForceFieldPtr spring = std::make_shared<SpringForceField>(particle, bottom_particle, stiffness, distance, damping);
+                springs.push_back(spring);
+            }
+            
+            // Triangles
+            // Just make a triangle mesh out of the plane vertices
+            if (bottom_border || right_border)
+                continue;
+
+            indices.push_back(glm::uvec3(index, index_right_bottom, index_bottom));
+            indices.push_back(glm::uvec3(index, index_right, index_right_bottom));
+        }
+    }
 }

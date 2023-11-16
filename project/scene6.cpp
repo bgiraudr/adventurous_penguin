@@ -59,7 +59,7 @@ int main() {
 	ShaderProgramPtr flatShader = addShader(viewer, "flat");
 	ShaderProgramPtr texShader = addShader(viewer, "texture");
 	ShaderProgramPtr wavesShader = addShader(viewer, "waves");
-	ShaderProgramPtr defaultShader = addShader(viewer, "default");
+	ShaderProgramPtr nonRigidShader = addShader(viewer, "nonRigid");
 
 	//Add a 3D frame to the viewer
 	//Add a 3D frame to the viewer
@@ -122,37 +122,13 @@ int main() {
 
 	/*OBJECTS*/
 
-	auto boat = createTexturedLightedObj(texShader, "boat.obj", "boat.png", simpleMaterial);
-	boat -> setGlobalTransform(getTranslationMatrix(5,-1,-49) * getScaleMatrix(0.15f, 0.15f, 0.15f) * getRotationMatrix(M_PI, glm::vec3(0,1,0)));
-	boat -> addLocalTransformKeyframe(getTranslationMatrix(0,0,0),0);
-	boat -> addLocalTransformKeyframe(getTranslationMatrix(0,0,0),4);
-	boat -> addLocalTransformKeyframe(getTranslationMatrix(5,-30,10),4.01);
-	boat -> addLocalTransformKeyframe(getTranslationMatrix(5,-30,10),20);
+	auto penguin = createTexturedLightedObj(nonRigidShader, "penguin_main.obj", "penguin.png", simpleMaterial);
+	// penguin -> setGlobalTransform(getTranslationMatrix(0,10,-6) * getScaleMatrix(0.15f, 0.15f, 0.15f));
 
-	auto damaged_boat = createTexturedLightedObj(texShader, "damaged_boat.obj", "boat.png", simpleMaterial);
-	damaged_boat -> setGlobalTransform(getTranslationMatrix(5,-1,-49) * getScaleMatrix(0.15f, 0.15f, 0.15f) * getRotationMatrix(M_PI, glm::vec3(0,1,0)));
-	damaged_boat -> addLocalTransformKeyframe(getTranslationMatrix(0,0.1,0) * getRotationMatrix(-M_PI/50, glm::vec3(0,0,1)),0);
-	damaged_boat -> addLocalTransformKeyframe(getTranslationMatrix(0,-0.1,0) * getRotationMatrix(M_PI/50, glm::vec3(0,0,1)) * getRotationMatrix(-M_PI/2, glm::vec3(1,0,0)),5);
-	damaged_boat -> addLocalTransformKeyframe(getTranslationMatrix(0,0.1,0) * getRotationMatrix(-M_PI/50, glm::vec3(0,0,1)) * getRotationMatrix(-M_PI/2, glm::vec3(1,0,0)),10);
-
-
-    auto damaged_boat2 = createTexturedLightedObj(texShader, "damaged_boat_2.obj", "boat.png", simpleMaterial);
-	damaged_boat2 -> setGlobalTransform(getTranslationMatrix(5,0.5,-49.8) * getScaleMatrix(0.15f, 0.15f, 0.15f) * getRotationMatrix(M_PI, glm::vec3(0,1,0)));
-	// boat -> addLocalTransformKeyframe(getTranslationMatrix(0),0);
-	damaged_boat2 -> addLocalTransformKeyframe(getTranslationMatrix(0),0);
-	// damaged_boat2 -> addLocalTransformKeyframe(getTranslationMatrix(0),0.5);
-	damaged_boat2 -> addLocalTransformKeyframe(getTranslationMatrix(0,-9,0) * getRotationMatrix(-M_PI/4, glm::vec3(0,0,1)),2.5);
-	damaged_boat2 -> addLocalTransformKeyframe(getTranslationMatrix(0,-9,0),20);
-	// boat -> addLocalTransformKeyframe(getTranslationMatrix(5,-30,10),20);
-
-
-	auto penguin = createTexturedLightedObj(texShader, "penguin_main.obj", "penguin.png", simpleMaterial);
-	penguin -> setGlobalTransform(getTranslationMatrix(0,10,-6) * getScaleMatrix(0.15f, 0.15f, 0.15f));
-
-	auto right_arm_penguin = createTexturedLightedObj(texShader, "bras.obj", "penguin.png", simpleMaterial);
+	auto right_arm_penguin = createTexturedLightedObj(nonRigidShader, "bras.obj", "penguin.png", simpleMaterial);
 	right_arm_penguin -> setGlobalTransform(getTranslationMatrix(0.8,2,0));
 
-	auto left_arm_penguin = createTexturedLightedObj(texShader, "bras.obj", "penguin.png", simpleMaterial);
+	auto left_arm_penguin = createTexturedLightedObj(nonRigidShader, "bras.obj", "penguin.png", simpleMaterial);
 	left_arm_penguin -> setGlobalTransform(getTranslationMatrix(-0.8,2,0) * getRotationMatrix(M_PI, glm::vec3(0,1,0)));
 
 	for (int i = 0; i < 50; i++) {
@@ -163,29 +139,9 @@ int main() {
 		left_arm_penguin->addLocalTransformKeyframe(getRotationMatrix(M_PI/4, glm::vec3(1,0,0)), 2*nb*i+nb);
 		left_arm_penguin->addLocalTransformKeyframe(getRotationMatrix(-M_PI/4, glm::vec3(1,0,0)), 2*nb*i+nb*2);
 	}
-	
-	auto icebergs = createTexturedLightedObj(texShader, "hills.obj", "iceberg.png", iceMaterial);
-	icebergs->setGlobalTransform(getTranslationMatrix(0,-3.5,0) * getScaleMatrix(20));
-	icebergs->setWrapOption(2);
-
-	auto hills = createTexturedLightedObj(texShader, "hills.obj", "hills.png", myMaterial);
-	hills->setGlobalTransform(getTranslationMatrix(-4,-8,-40) * getScaleMatrix(40));
-
 	auto waterPlane = std::make_shared<TexturedPlaneRenderable>(wavesShader, TEXTURE_PATH + "ocean/0.png");
 	waterPlane->setGlobalTransform(getRotationMatrix(M_PI/2, glm::vec3(1,0,0)) * getScaleMatrix(300));
 	waterPlane->setWrapOption(2);
-
-	auto iceberg = createTexturedLightedObj(texShader, "ice_pic.obj", "iceberg.png", iceMaterial);
-	
-	iceberg->setGlobalTransform(getTranslationMatrix(5,0,-55) * getScaleMatrix(15) * getRotationMatrix(M_PI, glm::vec3(1,0,0)));
-
-	auto iceberg1 = createTexturedLightedObj(texShader, "ice_pic.obj", "iceberg.png", iceMaterial);
-	iceberg1->setGlobalTransform(getTranslationMatrix(14,0,-22) * getScaleMatrix(6) * getRotationMatrix(M_PI, glm::vec3(1,0,0)));
-
-
-	auto snow = createTexturedLightedObj(wavesShader, "hills.obj", "snow.jpg", snowMaterial);
-	snow->setGlobalTransform(getTranslationMatrix(51,0,-31) * getScaleMatrix(30,6,30) * getRotationMatrix(M_PI/18, glm::vec3(0,0,1)));
-	snow->setWrapOption(2);
 
 	// HierarchicalRenderable::addChild(boat, penguin);
 
@@ -193,17 +149,7 @@ int main() {
 	HierarchicalRenderable::addChild(penguin, left_arm_penguin);
 
 	/*ADD RENDERABLES*/
-	// viewer.addRenderable(boat);
-	viewer.addRenderable(damaged_boat);
-	viewer.addRenderable(damaged_boat2);
 	viewer.addRenderable(penguin);
-	// viewer.addRenderable(seal);
-	viewer.addRenderable(waterPlane);
-	viewer.addRenderable(icebergs);
-	viewer.addRenderable(iceberg);
-	viewer.addRenderable(hills);
-	viewer.addRenderable(iceberg1);
-	viewer.addRenderable(snow);
 
 	/*START ANIMATION*/
 	viewer.startAnimation();
@@ -211,18 +157,11 @@ int main() {
 	/*CAMERA*/
 	Camera& camera = viewer.getCamera();
 	glm::vec3 forward = glm::vec3(0, 0, -1); // In OpenGL, the camera's forward axis is -z
-	// camera.addGlobalTransformKeyframe(lookAtModel(glm::vec3(7.3,0.7,-49.5), glm::vec3(5,0.7,-47.9), forward), 0);
-	// camera.addGlobalTransformKeyframe(lookAtModel(glm::vec3(7.3,0.7,-49.5), glm::vec3(5,0.7,-47.9), forward), 2);
-	// camera.addGlobalTransformKeyframe(lookAtModel(glm::vec3(2.9,3,-46.5), glm::vec3(7,-2,-48.6), forward), 2.01);
-	// camera.addGlobalTransformKeyframe(lookAtModel(glm::vec3(2.9,3,-46.5), glm::vec3(7,-2,-48.6), forward), 4);
-	// camera.addGlobalTransformKeyframe(lookAtModel(glm::vec3(3.1,0.7,-49.5), glm::vec3(6,0.7,-49.5), forward), 4.01);
-	// camera.addGlobalTransformKeyframe(lookAtModel(glm::vec3(3.1,0.7,-49.5), glm::vec3(6,0.7,-49.5), forward), 8);
 	
-	setCameraPosition(viewer, glm::mat4({-0.465316, 0.101567, 0.879298, -0, -0, 0.993395, -0.114747, 0, -0.885145, -0.0533933, -0.462242, 0, -40.4089, -4.10414, -29.2514, 1}));
+	// setCameraPosition(viewer, glm::mat4({-0.465316, 0.101567, 0.879298, -0, -0, 0.993395, -0.114747, 0, -0.885145, -0.0533933, -0.462242, 0, -40.4089, -4.10414, -29.2514, 1}));
 	addCubeMap(viewer, "skybox");
 	viewer.setKeyboardSpeed(6);
 	viewer.setSimulationTime(0);
-	std::cout << penguin->getModelMatrix()[3] << "\n";
 
 	while( viewer.isRunning()) {
 		viewer.handleEvent();
@@ -230,8 +169,6 @@ int main() {
 
 		int imageNumber = static_cast<int>(viewer.getTime()/2 * 20) % 20;
 		waterPlane->setImage(TEXTURE_PATH + "ocean/"+std::to_string(imageNumber)+".png");
-
-		// texShader->
 
 		viewer.draw();
 		viewer.display();

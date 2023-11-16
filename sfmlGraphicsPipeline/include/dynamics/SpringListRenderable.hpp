@@ -2,7 +2,7 @@
 #define SPRING_LIST_RENDERABLE_HPP
 
 #include "../MeshRenderable.hpp"
-#include "SpringForceField.hpp"
+#include "../dynamics/SpringForceField.hpp"
 #include <list>
 #include <vector>
 
@@ -24,16 +24,15 @@ public:
      * @param springForceFields The set of springs force fields that model
      * the springs we want to render.
      */
-    SpringListRenderable( ShaderProgramPtr program, std::list<SpringForceFieldPtr>& springForceFields );
+    SpringListRenderable( ShaderProgramPtr program, const std::vector<SpringForceFieldPtr>& springForceFields );
 
 protected:
     void do_draw();
 
 private:
     void update_spring_positions();
-    void update_texcoord_buffer();
 
-    std::list<SpringForceFieldPtr> m_springForceFields;
+    std::vector<SpringForceFieldPtr> m_springForceFields;
 };
 
 typedef std::shared_ptr<SpringListRenderable> SpringListRenderablePtr;

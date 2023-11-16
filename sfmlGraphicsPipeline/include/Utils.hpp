@@ -20,6 +20,8 @@
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
 #endif
+#include "dynamics/Particle.hpp"
+#include "dynamics/SpringForceField.hpp"
 
 // float32 version
 #ifndef M_PIf
@@ -180,5 +182,14 @@ std::vector<T> arange(T start, T stop, T step = 1) {
         values.push_back(value);
     return values;
 }
+
+void getFabric(float width, float height, int horizontal_resolution, int vertical_resolution,
+    std::vector<ParticlePtr> & particles,
+    std::vector<SpringForceFieldPtr> & springs,
+    std::vector<glm::vec3> & positions,
+    std::vector<glm::uvec3> & indices,
+    std::vector<glm::vec2> & tcoords,
+    float stiffness,
+    float spring_damping);
 
 #endif //UTILS
