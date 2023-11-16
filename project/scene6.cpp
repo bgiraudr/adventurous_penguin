@@ -145,9 +145,7 @@ int main() {
 	/*OBJECTS*/
 
 	auto penguin = createTexturedLightedObj(texShader, "penguin_main.obj", "penguin.png", simpleMaterial);
-	penguin -> setGlobalTransform(getTranslationMatrix(0,10,-6) * getScaleMatrix(0.15f, 0.15f, 0.15f));
-	penguin -> addGlobalTransformKeyframe(getRotationMatrix(M_PI/2, glm::vec3(1,0,0)), 0);
-	penguin -> addGlobalTransformKeyframe(getRotationMatrix(M_PI/2, glm::vec3(1,0,0)), 5);
+	penguin -> setGlobalTransform(getTranslationMatrix(26.5,4,0) * getRotationMatrix(M_PI/2, glm::vec3(1,0,0)) * getRotationMatrix(M_PI/2, glm::vec3(0,0,1)) * getScaleMatrix(0.15f, 0.15f, 0.15f));
 
 	auto right_arm_penguin = createTexturedLightedObj(texShader, "bras.obj", "penguin.png", simpleMaterial);
 	right_arm_penguin -> setGlobalTransform(getTranslationMatrix(0.8,2,0));
@@ -203,7 +201,7 @@ int main() {
 	HierarchicalRenderable::addChild(penguin, left_arm_penguin);
 
 	/*ADD RENDERABLES*/
-	// viewer.addRenderable(penguin);
+	viewer.addRenderable(penguin);
 	viewer.addRenderable(waterPlane);
 	viewer.addRenderable(snowPlatform);
 	viewer.addRenderable(snow);
