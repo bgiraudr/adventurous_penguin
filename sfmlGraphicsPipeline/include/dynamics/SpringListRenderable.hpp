@@ -31,6 +31,7 @@ protected:
 
 private:
     void update_spring_positions();
+    void update_texcoord_buffer();
 
     std::list<SpringForceFieldPtr> m_springForceFields;
 };

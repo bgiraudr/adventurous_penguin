@@ -18,7 +18,7 @@ ParticleListRenderable::ParticleListRenderable(ShaderProgramPtr program, std::ve
     m_particles(particles), m_pBuffer(0), m_cBuffer(0), m_nBuffer(0), m_iBuffer(0), m_idBuffer(0)
 {   
     std::vector<glm::uvec3> uvec3_indices;
-    getUnitIndexedSphere( m_positions, m_normals, uvec3_indices, strips, slices);
+    getUnitIndexedSphere(m_positions, m_normals, uvec3_indices, strips, slices);
     // Need to unpack the indices
     unpack(uvec3_indices, m_indices),
 

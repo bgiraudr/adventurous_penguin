@@ -25,7 +25,7 @@ SpringForceFieldRenderable::SpringForceFieldRenderable(ShaderProgramPtr shaderPr
 
 void SpringForceFieldRenderable::do_draw()
 {
-    glLineWidth(3.0);
+    glLineWidth(300.0);
     MeshRenderable::do_draw();
-    glLineWidth(1.0);
+    glLineWidth(100.0);
 }
