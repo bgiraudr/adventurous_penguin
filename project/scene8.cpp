@@ -36,33 +36,45 @@ const std::string TEXTURE_PATH = "../../sfmlGraphicsPipeline/textures/";
 
 void createFlag(Viewer& viewer, DynamicSystemPtr& system, DynamicSystemRenderablePtr &systemRenderable);
 
-ShaderProgramPtr addShader(Viewer& viewer, std::string vertex, std::string fragment) {
+// easy way to add a shader to the viewer
+ShaderProgramPtr addShader(Viewer &viewer, std::string vertex, std::string fragment)
+{
 	std::string shaderPath = "../../sfmlGraphicsPipeline/shaders/";
-	ShaderProgramPtr shader = std::make_shared<ShaderProgram>(shaderPath+vertex+".glsl", shaderPath+fragment+".glsl");
+	ShaderProgramPtr shader = std::make_shared<ShaderProgram>(shaderPath + vertex + ".glsl", shaderPath + fragment + ".glsl");
 	viewer.addShaderProgram(shader);
 	return shader;
 }
 
-ShaderProgramPtr addShader(Viewer& viewer, std::string shad) {
-	return addShader(viewer, shad+"Vertex", shad+"Fragment");
+// if the shader has the same name for vertex and fragment
+ShaderProgramPtr addShader(Viewer &viewer, std::string shad)
+{
+	return addShader(viewer, shad + "Vertex", shad + "Fragment");
 }
 
-void setCameraPosition(Viewer& viewer, glm::vec3 initPos,  glm::vec3 lookAt) {
+// set the initial position of the camera
+void setCameraPosition(Viewer &viewer, glm::vec3 initPos, glm::vec3 lookAt)
+{
 	viewer.getCamera().setViewMatrix(glm::lookAt(initPos, lookAt, glm::vec3(0, 1, 0)));
 }
 
-void setCameraPosition(Viewer& viewer, glm::mat4 viewMatrix) {
+// using the view matrix that can be exported from the camera itself
+void setCameraPosition(Viewer &viewer, glm::mat4 viewMatrix)
+{
 	viewer.getCamera().setViewMatrix(viewMatrix);
 }
 
-void addCubeMap(Viewer& viewer, std::string texture) {
+// easy way to add a cubemap
+void addCubeMap(Viewer &viewer, std::string texture)
+{
 	ShaderProgramPtr cubeMapShader = addShader(viewer, "cubeMap");
-	std::string cubemap_dir = "../../sfmlGraphicsPipeline/textures/"+texture;
+	std::string cubemap_dir = "../../sfmlGraphicsPipeline/textures/" + texture;
 	auto cubemap = std::make_shared<CubeMapRenderable>(cubeMapShader, cubemap_dir);
 	viewer.addRenderable(cubemap);
 }
 
-std::shared_ptr<TexturedLightedMeshRenderable> createTexturedLightedObj(ShaderProgramPtr shader, std::string obj, std::string texture, MaterialPtr material) {
+// easy way to create a textured object
+std::shared_ptr<TexturedLightedMeshRenderable> createTexturedLightedObj(ShaderProgramPtr shader, std::string obj, std::string texture, MaterialPtr material)
+{
 	return std::make_shared<TexturedLightedMeshRenderable>(shader, MESHES_PATH + obj, material, TEXTURE_PATH + texture);
 }
 
@@ -72,8 +84,6 @@ int main() {
 	/*SHADERS*/
 	ShaderProgramPtr flatShader = addShader(viewer, "flat");
 	ShaderProgramPtr texShader = addShader(viewer, "texture");
-	ShaderProgramPtr wavesShader = addShader(viewer, "waves");
-	ShaderProgramPtr nonRigidShader = addShader(viewer, "nonRigid");
 
 	//Add a 3D frame to the viewer
 	//Add a 3D frame to the viewer
@@ -108,7 +118,7 @@ int main() {
 
 	//Define a spot light
 	glm::vec3 s_position(11, 8.7, -3), s_spotDirection = glm::vec3(10,5,-2);
-	//glm::vec3 s_ambient(0.0,0.0,0.0), s_diffuse(0.0,0.0,0.0), s_specular(0.0,0.0,0.0);
+	// ambiant is a little bit blueish
 	glm::vec3 s_ambient(0.0,0.0,0.03), s_diffuse(0.7,0.7,0.8), s_specular(1.0,1.0,1.0);
 	float s_constant=1.0, s_linear=0.0, s_quadratic=0.0;
 	float s_innerCutOff=std::cos(glm::radians(10.0f)), s_outerCutOff=std::cos(glm::radians(50.0f));
@@ -118,11 +128,7 @@ int main() {
 														 s_innerCutOff, s_outerCutOff);
 	SpotLightRenderablePtr spotLightRenderable = std::make_shared<SpotLightRenderable>(flatShader, spotLight);
 	localTransformation = glm::scale(glm::mat4(1.0), glm::vec3(0.5,0.5,0.5));
-	// spotLightRenderable->setLocalTransform(localTransformation);
-
 	viewer.addSpotLight(spotLight);
-	// viewer.addRenderable(spotLightRenderable);
-
 	SpotLightPtr spotLight2 = std::make_shared<SpotLight>(glm::vec3(27,9.6,-7.5), glm::vec3(19.4,5,-2.8),
 														 s_ambient, s_diffuse, s_specular,
 														 s_constant, s_linear, s_quadratic,
@@ -130,7 +136,6 @@ int main() {
 	SpotLightRenderablePtr spotLightRenderable2 = std::make_shared<SpotLightRenderable>(flatShader, spotLight2);
 	spotLightRenderable->setLocalTransform(localTransformation);
 	viewer.addSpotLight(spotLight2);
-	// viewer.addRenderable(spotLightRenderable2);
 
 	/*MATERIALS*/
 
@@ -158,18 +163,15 @@ int main() {
 	auto left_arm_penguin = createTexturedLightedObj(texShader, "bras.obj", "penguin.png", simpleMaterial);
 	left_arm_penguin -> setGlobalTransform(getTranslationMatrix(-0.8,2,0) * getRotationMatrix(M_PI, glm::vec3(0,1,0)));
 	left_arm_penguin -> addLocalTransformKeyframe(getRotationMatrix(degToRad(0), glm::vec3(0,1,0)), 0);
-	for (int i = 0; i < 130; i++)
-	{
+
+	for (int i = 0; i < 130; i++) {
 		float f = 0.3;
 		left_arm_penguin -> addLocalTransformKeyframe(getRotationMatrix(degToRad(160), glm::vec3(1,0,0)), i*f+f);
 		left_arm_penguin -> addLocalTransformKeyframe(getRotationMatrix(degToRad(130), glm::vec3(1,0,0)), 2*i*f+2*f);
-
 		right_arm_penguin -> addLocalTransformKeyframe(getRotationMatrix(degToRad(-160), glm::vec3(1,0,0)), i*f+f+0.1);
 		right_arm_penguin -> addLocalTransformKeyframe(getRotationMatrix(degToRad(-120), glm::vec3(1,0,0)), 2*i*f+2*f+0.1);
 	}
 	
-
-
 	auto house = createTexturedLightedObj(texShader, "house.obj", "house.png", simpleMaterial);
 	house -> setGlobalTransform(getTranslationMatrix(7,5.2,-8) * getRotationMatrix(degToRad(30), glm::vec3(0,1,0)));
 
@@ -193,11 +195,8 @@ int main() {
 
 	auto mapPlane = std::make_shared<TexturedPlaneRenderable>(texShader, TEXTURE_PATH + "map.jpg");
 	mapPlane->setGlobalTransform(getTranslationMatrix(6.7,5.7,-0.2) * getRotationMatrix(degToRad(60), glm::vec3(0,1,0)) * getRotationMatrix(degToRad(-10), glm::vec3(1,0,0)) *getScaleMatrix(1, 0.7, 1));
-	
-	auto waterPlane = std::make_shared<TexturedPlaneRenderable>(texShader, TEXTURE_PATH + "ocean/0.png");
-	waterPlane->setGlobalTransform(getRotationMatrix(M_PI/2, glm::vec3(1,0,0)) * getScaleMatrix(300));
-	waterPlane->setWrapOption(2);
 
+	// same usage of vector for tree pos
 	std::vector<glm::vec3> treePos = {glm::vec3(2.6,5,-14), glm::vec3(1.6,5,5.7), glm::vec3(-3.8,6,-3.8), glm::vec3(-2,6,-7.4), glm::vec3(9.4,2,14), glm::vec3(13,4,-14), glm::vec3(-6.7,6.7,-14), glm::vec3(-2,3.4,13), glm::vec3(-15.5,7.6,-3.7), glm::vec3(23.7,5,5), glm::vec3(2,5.5,-4)};
 	for (int i = 0; i < treePos.size(); i++) {
 		auto sapins = createTexturedLightedObj(texShader, "sapin.obj", "sapin.png", simpleMaterial);
@@ -205,14 +204,11 @@ int main() {
 		viewer.addRenderable(sapins);
 	}
 
-	// HierarchicalRenderable::addChild(boat, penguin);
-
 	HierarchicalRenderable::addChild(penguin, right_arm_penguin);
 	HierarchicalRenderable::addChild(penguin, left_arm_penguin);
 
 	/*ADD RENDERABLES*/
 	viewer.addRenderable(penguin);
-	viewer.addRenderable(waterPlane);
 	viewer.addRenderable(snowPlatform);
 	viewer.addRenderable(snow);
 	viewer.addRenderable(snowHills);
@@ -231,8 +227,6 @@ int main() {
 	Camera& camera = viewer.getCamera();
 	glm::vec3 forward = glm::vec3(0, 0, -1); // In OpenGL, the camera's forward axis is -z
 
-	setCameraPosition(viewer, glm::mat4({0.935697, 0.159996, -0.314439, -0, -1.49012e-08, 0.891257, 0.453498, 0, 0.352804, -0.424337, 0.833947, -0, -6.71144, -4.68136, -3.83991, 1}));
-	
 	camera.addGlobalTransformKeyframe(lookAtModel(glm::vec3(6.4,6.2,3), glm::vec3(8.5,6.2,0), forward), 0);
 	camera.addGlobalTransformKeyframe(lookAtModel(glm::vec3(10,6.2,-1), glm::vec3(8.5,6.1,-0.5), forward), 2);
 	camera.addGlobalTransformKeyframe(lookAtModel(glm::vec3(10,6.2,-1), glm::vec3(8.5,6.1,-0.5), forward), 3.5);
@@ -244,10 +238,6 @@ int main() {
 	while( viewer.isRunning()) {
 		viewer.handleEvent();
 		viewer.animate();
-
-		int imageNumber = static_cast<int>(viewer.getTime()/2 * 20) % 20;
-		waterPlane->setImage(TEXTURE_PATH + "ocean/"+std::to_string(imageNumber)+".png");
-
 		viewer.draw();
 		viewer.display();
 	}	

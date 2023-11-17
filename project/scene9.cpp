@@ -36,33 +36,45 @@ const std::string TEXTURE_PATH = "../../sfmlGraphicsPipeline/textures/";
 
 std::shared_ptr<FlagRenderable> createFlag(Viewer& viewer, DynamicSystemPtr& system, DynamicSystemRenderablePtr &systemRenderable);
 
-ShaderProgramPtr addShader(Viewer& viewer, std::string vertex, std::string fragment) {
+// easy way to add a shader to the viewer
+ShaderProgramPtr addShader(Viewer &viewer, std::string vertex, std::string fragment)
+{
 	std::string shaderPath = "../../sfmlGraphicsPipeline/shaders/";
-	ShaderProgramPtr shader = std::make_shared<ShaderProgram>(shaderPath+vertex+".glsl", shaderPath+fragment+".glsl");
+	ShaderProgramPtr shader = std::make_shared<ShaderProgram>(shaderPath + vertex + ".glsl", shaderPath + fragment + ".glsl");
 	viewer.addShaderProgram(shader);
 	return shader;
 }
 
-ShaderProgramPtr addShader(Viewer& viewer, std::string shad) {
-	return addShader(viewer, shad+"Vertex", shad+"Fragment");
+// if the shader has the same name for vertex and fragment
+ShaderProgramPtr addShader(Viewer &viewer, std::string shad)
+{
+	return addShader(viewer, shad + "Vertex", shad + "Fragment");
 }
 
-void setCameraPosition(Viewer& viewer, glm::vec3 initPos,  glm::vec3 lookAt) {
+// set the initial position of the camera
+void setCameraPosition(Viewer &viewer, glm::vec3 initPos, glm::vec3 lookAt)
+{
 	viewer.getCamera().setViewMatrix(glm::lookAt(initPos, lookAt, glm::vec3(0, 1, 0)));
 }
 
-void setCameraPosition(Viewer& viewer, glm::mat4 viewMatrix) {
+// using the view matrix that can be exported from the camera itself
+void setCameraPosition(Viewer &viewer, glm::mat4 viewMatrix)
+{
 	viewer.getCamera().setViewMatrix(viewMatrix);
 }
 
-void addCubeMap(Viewer& viewer, std::string texture) {
+// easy way to add a cubemap
+void addCubeMap(Viewer &viewer, std::string texture)
+{
 	ShaderProgramPtr cubeMapShader = addShader(viewer, "cubeMap");
-	std::string cubemap_dir = "../../sfmlGraphicsPipeline/textures/"+texture;
+	std::string cubemap_dir = "../../sfmlGraphicsPipeline/textures/" + texture;
 	auto cubemap = std::make_shared<CubeMapRenderable>(cubeMapShader, cubemap_dir);
 	viewer.addRenderable(cubemap);
 }
 
-std::shared_ptr<TexturedLightedMeshRenderable> createTexturedLightedObj(ShaderProgramPtr shader, std::string obj, std::string texture, MaterialPtr material) {
+// easy way to create a textured object
+std::shared_ptr<TexturedLightedMeshRenderable> createTexturedLightedObj(ShaderProgramPtr shader, std::string obj, std::string texture, MaterialPtr material)
+{
 	return std::make_shared<TexturedLightedMeshRenderable>(shader, MESHES_PATH + obj, material, TEXTURE_PATH + texture);
 }
 
@@ -143,6 +155,8 @@ int main() {
 
 	/*OBJECTS*/
 
+	// setGlobalTransform has an impact on each objects and addGlobalTransformKeyFrame seems affect the object itself and reinitialized it's value.
+	// That's why i'm using the same code over and over to replace the penguin in the good spot
 	auto penguin = createTexturedLightedObj(texShader, "penguin_main.obj", "penguin.png", simpleMaterial);
 	penguin -> setGlobalTransform(getTranslationMatrix(8.9,4.4,-11)* getRotationMatrix(degToRad(180), glm::vec3(0,1,0)) * getRotationMatrix(degToRad(10), glm::vec3(1,0,0)) * getScaleMatrix(0.30f, 0.30f, 0.30f));
 	penguin -> addGlobalTransformKeyframe(getTranslationMatrix(8.9,4.4,-15)* getRotationMatrix(degToRad(180), glm::vec3(0,1,0)) * getRotationMatrix(degToRad(10), glm::vec3(1,0,0)) * getScaleMatrix(0.30f, 0.30f, 0.30f) * getTranslationMatrix(0,0,0), 0);
@@ -160,9 +174,8 @@ int main() {
 
 	auto left_arm_penguin = createTexturedLightedObj(texShader, "bras.obj", "penguin.png", simpleMaterial);
 	left_arm_penguin -> setGlobalTransform(getTranslationMatrix(-0.8,2,0) * getRotationMatrix(M_PI, glm::vec3(0,1,0)));
-	// left_arm_penguin -> addLocalTransformKeyframe(getRotationMatrix(degToRad(0), glm::vec3(0,1,0)), 0);
-	for (int i = 0; i < 130; i++)
-	{
+
+	for (int i = 0; i < 130; i++) {
 		float f = 0.3;
 		left_arm_penguin -> addLocalTransformKeyframe(getRotationMatrix(degToRad(90), glm::vec3(1,0,0)), i*f+f);
 		left_arm_penguin -> addLocalTransformKeyframe(getRotationMatrix(degToRad(60), glm::vec3(1,0,0)), 2*i*f+2*f);
@@ -171,7 +184,6 @@ int main() {
 		right_arm_penguin -> addLocalTransformKeyframe(getRotationMatrix(degToRad(-60), glm::vec3(1,0,0)), 2*i*f+2*f+0.1);
 	}
 	
-
 	auto raft = createTexturedLightedObj(texShader, "raft.obj", "raft.png", simpleMaterial);
 	raft -> setGlobalTransform(getTranslationMatrix(8.5,4.5,-12.8) * getRotationMatrix(degToRad(0), glm::vec3(0,1,0)));
 	raft->setLocalTransform(getScaleMatrix(0.6));
@@ -182,7 +194,6 @@ int main() {
 	raft->addGlobalTransformKeyframe(getTranslationMatrix(8.5,4.5,-16.8) * getRotationMatrix(degToRad(-25), glm::vec3(0,1,0)) * getTranslationMatrix(0,-0.3,-4), 8.2);
 	raft->addGlobalTransformKeyframe(getTranslationMatrix(8.5,4.5,-16.8) * getRotationMatrix(degToRad(-25), glm::vec3(0,1,0)) * getTranslationMatrix(0,-0.3,-4), 8.4);
 	raft->addGlobalTransformKeyframe(getTranslationMatrix(8.5,4.5,-16.8) * getRotationMatrix(degToRad(-25), glm::vec3(0,1,0)) * getTranslationMatrix(0,-0.3,-4), 16);
-	// raft->addGlobalTransformKeyframe(getTranslationMatrix(8.5,4.5,-16.8) * getRotationMatrix(degToRad(-25), glm::vec3(0,1,0)) * getTranslationMatrix(0,-0.2,0), 15);
 
 	auto snowHills = createTexturedLightedObj(texShader, "hills.obj", "snow.jpg", snowMaterial);
 	snowHills -> setGlobalTransform(getTranslationMatrix(0,0.2,0) * getScaleMatrix(30));
@@ -217,6 +228,7 @@ int main() {
 		viewer.addRenderable(iceberg);
 	}
 
+	// the flag is beeing render by the main function. Because of the usage of the hierarchical raft
 	auto flag = createFlag(viewer, system, systemRenderable);
 	flag->setGlobalTransform(getTranslationMatrix(-1,0.6,-0.4) * getScaleMatrix(3,1.2,3));
 
@@ -246,10 +258,6 @@ int main() {
 	glm::vec3 forward = glm::vec3(0, 0, -1); // In OpenGL, the camera's forward axis is -z
 
 	setCameraPosition(viewer, glm::mat4({0.794635, -0.277143, 0.540136, -0, 2.98023e-08, 0.889717, 0.456513, -0, -0.607088, -0.362761, 0.707, -0, -16.983, -7.4767, 1.52467, 1}));
-	
-	// camera.addGlobalTransformKeyframe(lookAtModel(glm::vec3(6.4,6.2,3), glm::vec3(8.5,6.2,0), forward), 0);
-	// camera.addGlobalTransformKeyframe(lookAtModel(glm::vec3(10,6.2,-1), glm::vec3(8.5,6.1,-0.5), forward), 2);
-	// camera.addGlobalTransformKeyframe(lookAtModel(glm::vec3(10,6.2,-1), glm::vec3(8.5,6.1,-0.5), forward), 3.5);
 
 	addCubeMap(viewer, "night");
 	viewer.setKeyboardSpeed(8);
@@ -268,6 +276,7 @@ int main() {
 	return EXIT_SUCCESS;
 }
 
+// the flag is beeing render by the main function
 std::shared_ptr<FlagRenderable> createFlag(Viewer& viewer, DynamicSystemPtr& system, DynamicSystemRenderablePtr &systemRenderable)
 {
     //Initialize a shader for the following renderables

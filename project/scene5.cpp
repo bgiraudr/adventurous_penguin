@@ -36,33 +36,45 @@ const std::string TEXTURE_PATH = "../../sfmlGraphicsPipeline/textures/";
 
 void createFlag(Viewer& viewer, DynamicSystemPtr& system, DynamicSystemRenderablePtr &systemRenderable);
 
-ShaderProgramPtr addShader(Viewer& viewer, std::string vertex, std::string fragment) {
+// easy way to add a shader to the viewer
+ShaderProgramPtr addShader(Viewer &viewer, std::string vertex, std::string fragment)
+{
 	std::string shaderPath = "../../sfmlGraphicsPipeline/shaders/";
-	ShaderProgramPtr shader = std::make_shared<ShaderProgram>(shaderPath+vertex+".glsl", shaderPath+fragment+".glsl");
+	ShaderProgramPtr shader = std::make_shared<ShaderProgram>(shaderPath + vertex + ".glsl", shaderPath + fragment + ".glsl");
 	viewer.addShaderProgram(shader);
 	return shader;
 }
 
-ShaderProgramPtr addShader(Viewer& viewer, std::string shad) {
-	return addShader(viewer, shad+"Vertex", shad+"Fragment");
+// if the shader has the same name for vertex and fragment
+ShaderProgramPtr addShader(Viewer &viewer, std::string shad)
+{
+	return addShader(viewer, shad + "Vertex", shad + "Fragment");
 }
 
-void setCameraPosition(Viewer& viewer, glm::vec3 initPos,  glm::vec3 lookAt) {
+// set the initial position of the camera
+void setCameraPosition(Viewer &viewer, glm::vec3 initPos, glm::vec3 lookAt)
+{
 	viewer.getCamera().setViewMatrix(glm::lookAt(initPos, lookAt, glm::vec3(0, 1, 0)));
 }
 
-void setCameraPosition(Viewer& viewer, glm::mat4 viewMatrix) {
+// using the view matrix that can be exported from the camera itself
+void setCameraPosition(Viewer &viewer, glm::mat4 viewMatrix)
+{
 	viewer.getCamera().setViewMatrix(viewMatrix);
 }
 
-void addCubeMap(Viewer& viewer, std::string texture) {
+// easy way to add a cubemap
+void addCubeMap(Viewer &viewer, std::string texture)
+{
 	ShaderProgramPtr cubeMapShader = addShader(viewer, "cubeMap");
-	std::string cubemap_dir = "../../sfmlGraphicsPipeline/textures/"+texture;
+	std::string cubemap_dir = "../../sfmlGraphicsPipeline/textures/" + texture;
 	auto cubemap = std::make_shared<CubeMapRenderable>(cubeMapShader, cubemap_dir);
 	viewer.addRenderable(cubemap);
 }
 
-std::shared_ptr<TexturedLightedMeshRenderable> createTexturedLightedObj(ShaderProgramPtr shader, std::string obj, std::string texture, MaterialPtr material) {
+// easy way to create a textured object
+std::shared_ptr<TexturedLightedMeshRenderable> createTexturedLightedObj(ShaderProgramPtr shader, std::string obj, std::string texture, MaterialPtr material)
+{
 	return std::make_shared<TexturedLightedMeshRenderable>(shader, MESHES_PATH + obj, material, TEXTURE_PATH + texture);
 }
 
@@ -76,17 +88,8 @@ int main() {
 	ShaderProgramPtr nonRigidShader = addShader(viewer, "nonRigid");
 
 	//Add a 3D frame to the viewer
-	//Add a 3D frame to the viewer
 	FrameRenderablePtr frame = std::make_shared<FrameRenderable>(flatShader);
 	viewer.addRenderable(frame);
-
-	DynamicSystemPtr system = std::make_shared<DynamicSystem>();
-    EulerExplicitSolverPtr solver = std::make_shared<EulerExplicitSolver>();
-    system->setSolver(solver);
-    system->setDt(0.01);
-
-	DynamicSystemRenderablePtr systemRenderable = std::make_shared<DynamicSystemRenderable>(system);
-    viewer.addRenderable(systemRenderable);
 
 	/*LIGHTS*/
 
@@ -108,7 +111,6 @@ int main() {
 
 	//Define a spot light
 	glm::vec3 s_position(9, 11.4, -15.5), s_spotDirection = glm::vec3(10,5,-7);
-	//glm::vec3 s_ambient(0.0,0.0,0.0), s_diffuse(0.0,0.0,0.0), s_specular(0.0,0.0,0.0);
 	glm::vec3 s_ambient(0.0,0.0,0.03), s_diffuse(0.7,0.7,0.8), s_specular(1.0,1.0,1.0);
 	float s_constant=1.0, s_linear=0.0, s_quadratic=0.0;
 	float s_innerCutOff=std::cos(glm::radians(10.0f)), s_outerCutOff=std::cos(glm::radians(20.0f));
@@ -118,10 +120,7 @@ int main() {
 														 s_innerCutOff, s_outerCutOff);
 	SpotLightRenderablePtr spotLightRenderable = std::make_shared<SpotLightRenderable>(flatShader, spotLight);
 	localTransformation = glm::scale(glm::mat4(1.0), glm::vec3(0.5,0.5,0.5));
-	// spotLightRenderable->setLocalTransform(localTransformation);
-
 	viewer.addSpotLight(spotLight);
-	// viewer.addRenderable(spotLightRenderable);
 
 	SpotLightPtr spotLight2 = std::make_shared<SpotLight>(glm::vec3(27,9.6,-7.5), glm::vec3(19.4,5,-2.8),
 														 s_ambient, s_diffuse, s_specular,
@@ -130,7 +129,6 @@ int main() {
 	SpotLightRenderablePtr spotLightRenderable2 = std::make_shared<SpotLightRenderable>(flatShader, spotLight2);
 	spotLightRenderable->setLocalTransform(localTransformation);
 	viewer.addSpotLight(spotLight2);
-	// viewer.addRenderable(spotLightRenderable2);
 
 	/*MATERIALS*/
 
@@ -144,6 +142,7 @@ int main() {
 
 	/*OBJECTS*/
 
+	// the penguin is using a non rigid shader to move like it's beeing floating
 	auto penguin = createTexturedLightedObj(nonRigidShader, "penguin_main.obj", "penguin.png", simpleMaterial);
 	penguin -> setGlobalTransform(getTranslationMatrix(30,1.5,-51) * getScaleMatrix(0.15f, 0.15f, 0.15f));
 	penguin -> addGlobalTransformKeyframe(getTranslationMatrix(29,0,-47) * getRotationMatrix(M_PI/2, glm::vec3(1,0,0)) * getRotationMatrix(-M_PI/2, glm::vec3(0,0,1)) * getScaleMatrix(0.15f, 0.15f, 0.15f), 0);
@@ -175,8 +174,6 @@ int main() {
 	auto iceberg = createTexturedLightedObj(texShader, "ice_pic.obj", "iceberg.png", iceMaterial);
 	iceberg->setGlobalTransform(getTranslationMatrix(14,2,-22) * getScaleMatrix(7) * getRotationMatrix(M_PI, glm::vec3(1,0,0)));
 
-	// HierarchicalRenderable::addChild(boat, penguin);
-
 	HierarchicalRenderable::addChild(penguin, right_arm_penguin);
 	HierarchicalRenderable::addChild(penguin, left_arm_penguin);
 
@@ -194,7 +191,6 @@ int main() {
 	/*CAMERA*/
 	Camera& camera = viewer.getCamera();
 	glm::vec3 forward = glm::vec3(0, 0, -1); // In OpenGL, the camera's forward axis is -z
-	
 	camera.addGlobalTransformKeyframe(lookAtModel(glm::vec3(30,1,-49), glm::vec3(32,1,-43), forward), 0);
 	camera.addGlobalTransformKeyframe(lookAtModel(glm::vec3(30,1,-48), glm::vec3(32,1,-43), forward), 5);
 
@@ -203,10 +199,12 @@ int main() {
 	viewer.setKeyboardSpeed(8);
 	viewer.setSimulationTime(0);
 
+	// this scene is for the penguin beeing ejected from the boat and landing on the ice
 	while( viewer.isRunning()) {
 		viewer.handleEvent();
 		viewer.animate();
-
+		
+		// render the gif located in the ocean folder. Displaying the 20 images in one second
 		int imageNumber = static_cast<int>(viewer.getTime()/2 * 20) % 20;
 		waterPlane->setImage(TEXTURE_PATH + "ocean/"+std::to_string(imageNumber)+".png");
 

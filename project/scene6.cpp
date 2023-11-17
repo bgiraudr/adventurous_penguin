@@ -36,33 +36,45 @@ const std::string TEXTURE_PATH = "../../sfmlGraphicsPipeline/textures/";
 
 void createFlag(Viewer& viewer, DynamicSystemPtr& system, DynamicSystemRenderablePtr &systemRenderable);
 
-ShaderProgramPtr addShader(Viewer& viewer, std::string vertex, std::string fragment) {
+// easy way to add a shader to the viewer
+ShaderProgramPtr addShader(Viewer &viewer, std::string vertex, std::string fragment)
+{
 	std::string shaderPath = "../../sfmlGraphicsPipeline/shaders/";
-	ShaderProgramPtr shader = std::make_shared<ShaderProgram>(shaderPath+vertex+".glsl", shaderPath+fragment+".glsl");
+	ShaderProgramPtr shader = std::make_shared<ShaderProgram>(shaderPath + vertex + ".glsl", shaderPath + fragment + ".glsl");
 	viewer.addShaderProgram(shader);
 	return shader;
 }
 
-ShaderProgramPtr addShader(Viewer& viewer, std::string shad) {
-	return addShader(viewer, shad+"Vertex", shad+"Fragment");
+// if the shader has the same name for vertex and fragment
+ShaderProgramPtr addShader(Viewer &viewer, std::string shad)
+{
+	return addShader(viewer, shad + "Vertex", shad + "Fragment");
 }
 
-void setCameraPosition(Viewer& viewer, glm::vec3 initPos,  glm::vec3 lookAt) {
+// set the initial position of the camera
+void setCameraPosition(Viewer &viewer, glm::vec3 initPos, glm::vec3 lookAt)
+{
 	viewer.getCamera().setViewMatrix(glm::lookAt(initPos, lookAt, glm::vec3(0, 1, 0)));
 }
 
-void setCameraPosition(Viewer& viewer, glm::mat4 viewMatrix) {
+// using the view matrix that can be exported from the camera itself
+void setCameraPosition(Viewer &viewer, glm::mat4 viewMatrix)
+{
 	viewer.getCamera().setViewMatrix(viewMatrix);
 }
 
-void addCubeMap(Viewer& viewer, std::string texture) {
+// easy way to add a cubemap
+void addCubeMap(Viewer &viewer, std::string texture)
+{
 	ShaderProgramPtr cubeMapShader = addShader(viewer, "cubeMap");
-	std::string cubemap_dir = "../../sfmlGraphicsPipeline/textures/"+texture;
+	std::string cubemap_dir = "../../sfmlGraphicsPipeline/textures/" + texture;
 	auto cubemap = std::make_shared<CubeMapRenderable>(cubeMapShader, cubemap_dir);
 	viewer.addRenderable(cubemap);
 }
 
-std::shared_ptr<TexturedLightedMeshRenderable> createTexturedLightedObj(ShaderProgramPtr shader, std::string obj, std::string texture, MaterialPtr material) {
+// easy way to create a textured object
+std::shared_ptr<TexturedLightedMeshRenderable> createTexturedLightedObj(ShaderProgramPtr shader, std::string obj, std::string texture, MaterialPtr material)
+{
 	return std::make_shared<TexturedLightedMeshRenderable>(shader, MESHES_PATH + obj, material, TEXTURE_PATH + texture);
 }
 
@@ -118,10 +130,7 @@ int main() {
 														 s_innerCutOff, s_outerCutOff);
 	SpotLightRenderablePtr spotLightRenderable = std::make_shared<SpotLightRenderable>(flatShader, spotLight);
 	localTransformation = glm::scale(glm::mat4(1.0), glm::vec3(0.5,0.5,0.5));
-	// spotLightRenderable->setLocalTransform(localTransformation);
-
 	viewer.addSpotLight(spotLight);
-	// viewer.addRenderable(spotLightRenderable);
 
 	SpotLightPtr spotLight2 = std::make_shared<SpotLight>(glm::vec3(27,9.6,-7.5), glm::vec3(19.4,5,-2.8),
 														 s_ambient, s_diffuse, s_specular,
@@ -130,7 +139,6 @@ int main() {
 	SpotLightRenderablePtr spotLightRenderable2 = std::make_shared<SpotLightRenderable>(flatShader, spotLight2);
 	spotLightRenderable->setLocalTransform(localTransformation);
 	viewer.addSpotLight(spotLight2);
-	// viewer.addRenderable(spotLightRenderable2);
 
 	/*MATERIALS*/
 
@@ -153,6 +161,7 @@ int main() {
 	auto left_arm_penguin = createTexturedLightedObj(texShader, "bras.obj", "penguin.png", simpleMaterial);
 	left_arm_penguin -> setGlobalTransform(getTranslationMatrix(-0.8,2,0) * getRotationMatrix(M_PI, glm::vec3(0,1,0)));
 
+	// use of a custom degToRad function
 	auto house = createTexturedLightedObj(texShader, "house.obj", "house.png", simpleMaterial);
 	house -> setGlobalTransform(getTranslationMatrix(7,5.2,-8) * getRotationMatrix(degToRad(30), glm::vec3(0,1,0)));
 
@@ -171,6 +180,7 @@ int main() {
 	snowPlatform -> setGlobalTransform(getTranslationMatrix(0,-2,-6) * getScaleMatrix(2));
 	snowPlatform->setWrapOption(2);
 
+	// use a list of vec3 to render all of the trees
 	std::vector<glm::vec3> treePos = {glm::vec3(2.6,5,-14), glm::vec3(1.6,5,5.7), glm::vec3(-3.8,6,-3.8), glm::vec3(-2,6,-7.4), glm::vec3(9.4,2,14), glm::vec3(13,4,-14), glm::vec3(-6.7,6.7,-14), glm::vec3(-2,3.4,13), glm::vec3(-15.5,7.6,-3.7), glm::vec3(23.7,5,5), glm::vec3(11.3,5,-0.6)};
 	for (int i = 0; i < treePos.size(); i++) {
 		/* code */
@@ -180,22 +190,11 @@ int main() {
 	}
 
 	auto mapPlane = std::make_shared<TexturedPlaneRenderable>(texShader, TEXTURE_PATH + "map.jpg");
-	mapPlane->setGlobalTransform(getTranslationMatrix(8,6,-5) * getRotationMatrix(degToRad(30), glm::vec3(0,1,0)) *getScaleMatrix(1, 0.7, 1));
+	mapPlane->setGlobalTransform(getTranslationMatrix(8,6,-5) * getRotationMatrix(degToRad(30), glm::vec3(0,1,0)) * getScaleMatrix(1, 0.7, 1));
 	
-
-	// for (int i = 0; i < 50; i++) {
-	// 	float nb = 0.2;
-	// 	right_arm_penguin->addLocalTransformKeyframe(getRotationMatrix(M_PI/4, glm::vec3(1,0,0)), 2*nb*i+nb);
-	// 	right_arm_penguin->addLocalTransformKeyframe(getRotationMatrix(-M_PI/4, glm::vec3(1,0,0)), 2*nb*i+nb*2);
-
-	// 	left_arm_penguin->addLocalTransformKeyframe(getRotationMatrix(M_PI/4, glm::vec3(1,0,0)), 2*nb*i+nb);
-	// 	left_arm_penguin->addLocalTransformKeyframe(getRotationMatrix(-M_PI/4, glm::vec3(1,0,0)), 2*nb*i+nb*2);
-	// }
 	auto waterPlane = std::make_shared<TexturedPlaneRenderable>(texShader, TEXTURE_PATH + "ocean/0.png");
 	waterPlane->setGlobalTransform(getRotationMatrix(M_PI/2, glm::vec3(1,0,0)) * getScaleMatrix(300));
 	waterPlane->setWrapOption(2);
-
-	// HierarchicalRenderable::addChild(boat, penguin);
 
 	HierarchicalRenderable::addChild(penguin, right_arm_penguin);
 	HierarchicalRenderable::addChild(penguin, left_arm_penguin);
@@ -210,9 +209,9 @@ int main() {
 	viewer.addRenderable(house);
 	viewer.addRenderable(mapPlane);
 
+	// create the custom flag. It will be positionned in the function
 	createFlag(viewer, system, systemRenderable);
     system->setDt(8e-4);
-
 
 	/*START ANIMATION*/
 	viewer.startAnimation();
@@ -235,10 +234,12 @@ int main() {
 	viewer.setKeyboardSpeed(8);
 	viewer.setSimulationTime(0);
 
+	// this scene uses a custom flag renderable to display a texture on a list of springs
 	while( viewer.isRunning()) {
 		viewer.handleEvent();
 		viewer.animate();
 
+		// render the gif located in the ocean folder. Displaying the 20 images in one second
 		int imageNumber = static_cast<int>(viewer.getTime()/2 * 20) % 20;
 		waterPlane->setImage(TEXTURE_PATH + "ocean/"+std::to_string(imageNumber)+".png");
 
@@ -248,6 +249,8 @@ int main() {
 	return EXIT_SUCCESS;
 }
 
+// create the custom flag with the system renderable
+// this flag is beeing used with 4 fixed points to act more like a tent
 void createFlag(Viewer& viewer, DynamicSystemPtr& system, DynamicSystemRenderablePtr &systemRenderable)
 {
     //Initialize a shader for the following renderables
@@ -273,6 +276,7 @@ void createFlag(Viewer& viewer, DynamicSystemPtr& system, DynamicSystemRenderabl
     //Add it to the system as a force field
     ConstantForceFieldPtr gravityForceField = std::make_shared<ConstantForceField>(system->getParticles(), DynamicSystem::gravity);
     system->addForceField(gravityForceField);
+	// set the wind
     ConstantForceFieldPtr windForceField = std::make_shared<ConstantForceField>(system->getParticles(), glm::vec3(0.0, 2.0, 10.0));
     system->addForceField(windForceField);
 
@@ -281,15 +285,8 @@ void createFlag(Viewer& viewer, DynamicSystemPtr& system, DynamicSystemRenderabl
     DampingForceFieldPtr dampingForceField = std::make_shared<DampingForceField>(system->getParticles(), dampingCoefficient);
     system->addForceField(dampingForceField);
 
+	// positionned the flag in the scene
 	flag->setGlobalTransform(getTranslationMatrix(10,7.1,-6.1) * getRotationMatrix(M_PI/2, glm::vec3(1,0,0)) * getRotationMatrix(degToRad(60), glm::vec3(0,0,1)) * getScaleMatrix(3));
-
-	 //Create a springListRenderable to efficiently visualize the springs of the system
-    // SpringListRenderablePtr springsRenderable = std::make_shared<SpringListRenderable>(flatShader, flag->getSprings());
-    // HierarchicalRenderable::addChild( systemRenderable, springsRenderable );
-
-    // //Create a particleListRenderable to efficiently visualize the particles of the system
-    // ParticleListRenderablePtr particleListRenderable = std::make_shared<ParticleListRenderable>( instancedShader, flag->getParticles());
-    // HierarchicalRenderable::addChild(systemRenderable, particleListRenderable);
 
     viewer.addRenderable(flag);
     viewer.stopAnimation();

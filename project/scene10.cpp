@@ -36,33 +36,45 @@ const std::string TEXTURE_PATH = "../../sfmlGraphicsPipeline/textures/";
 
 std::shared_ptr<FlagRenderable> createFlag(Viewer& viewer, DynamicSystemPtr& system, DynamicSystemRenderablePtr &systemRenderable);
 
-ShaderProgramPtr addShader(Viewer& viewer, std::string vertex, std::string fragment) {
+// easy way to add a shader to the viewer
+ShaderProgramPtr addShader(Viewer &viewer, std::string vertex, std::string fragment)
+{
 	std::string shaderPath = "../../sfmlGraphicsPipeline/shaders/";
-	ShaderProgramPtr shader = std::make_shared<ShaderProgram>(shaderPath+vertex+".glsl", shaderPath+fragment+".glsl");
+	ShaderProgramPtr shader = std::make_shared<ShaderProgram>(shaderPath + vertex + ".glsl", shaderPath + fragment + ".glsl");
 	viewer.addShaderProgram(shader);
 	return shader;
 }
 
-ShaderProgramPtr addShader(Viewer& viewer, std::string shad) {
-	return addShader(viewer, shad+"Vertex", shad+"Fragment");
+// if the shader has the same name for vertex and fragment
+ShaderProgramPtr addShader(Viewer &viewer, std::string shad)
+{
+	return addShader(viewer, shad + "Vertex", shad + "Fragment");
 }
 
-void setCameraPosition(Viewer& viewer, glm::vec3 initPos,  glm::vec3 lookAt) {
+// set the initial position of the camera
+void setCameraPosition(Viewer &viewer, glm::vec3 initPos, glm::vec3 lookAt)
+{
 	viewer.getCamera().setViewMatrix(glm::lookAt(initPos, lookAt, glm::vec3(0, 1, 0)));
 }
 
-void setCameraPosition(Viewer& viewer, glm::mat4 viewMatrix) {
+// using the view matrix that can be exported from the camera itself
+void setCameraPosition(Viewer &viewer, glm::mat4 viewMatrix)
+{
 	viewer.getCamera().setViewMatrix(viewMatrix);
 }
 
-void addCubeMap(Viewer& viewer, std::string texture) {
+// easy way to add a cubemap
+void addCubeMap(Viewer &viewer, std::string texture)
+{
 	ShaderProgramPtr cubeMapShader = addShader(viewer, "cubeMap");
-	std::string cubemap_dir = "../../sfmlGraphicsPipeline/textures/"+texture;
+	std::string cubemap_dir = "../../sfmlGraphicsPipeline/textures/" + texture;
 	auto cubemap = std::make_shared<CubeMapRenderable>(cubeMapShader, cubemap_dir);
 	viewer.addRenderable(cubemap);
 }
 
-std::shared_ptr<TexturedLightedMeshRenderable> createTexturedLightedObj(ShaderProgramPtr shader, std::string obj, std::string texture, MaterialPtr material) {
+// easy way to create a textured object
+std::shared_ptr<TexturedLightedMeshRenderable> createTexturedLightedObj(ShaderProgramPtr shader, std::string obj, std::string texture, MaterialPtr material)
+{
 	return std::make_shared<TexturedLightedMeshRenderable>(shader, MESHES_PATH + obj, material, TEXTURE_PATH + texture);
 }
 

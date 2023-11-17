@@ -21,6 +21,7 @@
 const std::string MESHES_PATH = "../../sfmlGraphicsPipeline/meshes/";
 const std::string TEXTURE_PATH = "../../sfmlGraphicsPipeline/textures/";
 
+// easy way to add a shader to the viewer
 ShaderProgramPtr addShader(Viewer &viewer, std::string vertex, std::string fragment)
 {
 	std::string shaderPath = "../../sfmlGraphicsPipeline/shaders/";
@@ -29,21 +30,25 @@ ShaderProgramPtr addShader(Viewer &viewer, std::string vertex, std::string fragm
 	return shader;
 }
 
+// if the shader has the same name for vertex and fragment
 ShaderProgramPtr addShader(Viewer &viewer, std::string shad)
 {
 	return addShader(viewer, shad + "Vertex", shad + "Fragment");
 }
 
+// set the initial position of the camera
 void setCameraPosition(Viewer &viewer, glm::vec3 initPos, glm::vec3 lookAt)
 {
 	viewer.getCamera().setViewMatrix(glm::lookAt(initPos, lookAt, glm::vec3(0, 1, 0)));
 }
 
+// using the view matrix that can be exported from the camera itself
 void setCameraPosition(Viewer &viewer, glm::mat4 viewMatrix)
 {
 	viewer.getCamera().setViewMatrix(viewMatrix);
 }
 
+// easy way to add a cubemap
 void addCubeMap(Viewer &viewer, std::string texture)
 {
 	ShaderProgramPtr cubeMapShader = addShader(viewer, "cubeMap");
@@ -52,6 +57,7 @@ void addCubeMap(Viewer &viewer, std::string texture)
 	viewer.addRenderable(cubemap);
 }
 
+// easy way to create a textured object
 std::shared_ptr<TexturedLightedMeshRenderable> createTexturedLightedObj(ShaderProgramPtr shader, std::string obj, std::string texture, MaterialPtr material)
 {
 	return std::make_shared<TexturedLightedMeshRenderable>(shader, MESHES_PATH + obj, material, TEXTURE_PATH + texture);
@@ -101,14 +107,12 @@ int main()
 														  s_innerCutOff, s_outerCutOff);
 	SpotLightRenderablePtr spotLightRenderable2 = std::make_shared<SpotLightRenderable>(flatShader, spotLight2);
 	viewer.addSpotLight(spotLight2);
-	viewer.addRenderable(spotLightRenderable2);
 
 	/*MATERIALS*/
 
 	glm::vec3 mAmbient(1.0), mDiffuse(1.0), mSpecular(1.0);
 	float mShininess = 1;
 	MaterialPtr myMaterial = std::make_shared<Material>(mAmbient, mDiffuse, mSpecular, mShininess);
-
 	MaterialPtr iceMaterial = std::make_shared<Material>(glm::vec3(0.7, 0.8, 1.0), glm::vec3(0.7, 0.8, 1.0), glm::vec3(10), 50);
 	MaterialPtr simpleMaterial = std::make_shared<Material>(glm::vec3(0.8), glm::vec3(0.6), glm::vec3(0.3), 10);
 
@@ -128,7 +132,6 @@ int main()
 
 	auto left_arm_penguin = createTexturedLightedObj(texShader, "bras.obj", "penguin.png", simpleMaterial);
 	left_arm_penguin->setGlobalTransform(getTranslationMatrix(-0.8, 2, 0) * getRotationMatrix(M_PI, glm::vec3(0, 1, 0)));
-
 	left_arm_penguin->addLocalTransformKeyframe(getRotationMatrix(M_PI, glm::vec3(1, 0, 0)), 0);
 	left_arm_penguin->addLocalTransformKeyframe(getRotationMatrix(0, glm::vec3(1, 0, 0)), 0.15);
 	left_arm_penguin->addLocalTransformKeyframe(getRotationMatrix(-M_PI, glm::vec3(1, 0, 0)), 0.3);
@@ -153,13 +156,13 @@ int main()
 
 	double startFov = 0.5;
 	double targetFov = 2.5;
-	double transitionDuration = 0.5; // en secondes
+	double transitionDuration = 0.5; // seconds
 	double currentFov = startFov;
 	auto startTime = std::chrono::high_resolution_clock::now();
 	bool increasingFov = true;
 
-	while (viewer.isRunning())
-	{
+	// this scene is not used in the project. It's just a poc using the fov of the camera
+	while (viewer.isRunning()) {
 		viewer.handleEvent();
 		viewer.animate();
 

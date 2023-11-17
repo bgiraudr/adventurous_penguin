@@ -36,33 +36,45 @@ const std::string TEXTURE_PATH = "../../sfmlGraphicsPipeline/textures/";
 
 void createFlag(Viewer& viewer, DynamicSystemPtr& system, DynamicSystemRenderablePtr &systemRenderable);
 
-ShaderProgramPtr addShader(Viewer& viewer, std::string vertex, std::string fragment) {
+// easy way to add a shader to the viewer
+ShaderProgramPtr addShader(Viewer &viewer, std::string vertex, std::string fragment)
+{
 	std::string shaderPath = "../../sfmlGraphicsPipeline/shaders/";
-	ShaderProgramPtr shader = std::make_shared<ShaderProgram>(shaderPath+vertex+".glsl", shaderPath+fragment+".glsl");
+	ShaderProgramPtr shader = std::make_shared<ShaderProgram>(shaderPath + vertex + ".glsl", shaderPath + fragment + ".glsl");
 	viewer.addShaderProgram(shader);
 	return shader;
 }
 
-ShaderProgramPtr addShader(Viewer& viewer, std::string shad) {
-	return addShader(viewer, shad+"Vertex", shad+"Fragment");
+// if the shader has the same name for vertex and fragment
+ShaderProgramPtr addShader(Viewer &viewer, std::string shad)
+{
+	return addShader(viewer, shad + "Vertex", shad + "Fragment");
 }
 
-void setCameraPosition(Viewer& viewer, glm::vec3 initPos,  glm::vec3 lookAt) {
+// set the initial position of the camera
+void setCameraPosition(Viewer &viewer, glm::vec3 initPos, glm::vec3 lookAt)
+{
 	viewer.getCamera().setViewMatrix(glm::lookAt(initPos, lookAt, glm::vec3(0, 1, 0)));
 }
 
-void setCameraPosition(Viewer& viewer, glm::mat4 viewMatrix) {
+// using the view matrix that can be exported from the camera itself
+void setCameraPosition(Viewer &viewer, glm::mat4 viewMatrix)
+{
 	viewer.getCamera().setViewMatrix(viewMatrix);
 }
 
-void addCubeMap(Viewer& viewer, std::string texture) {
+// easy way to add a cubemap
+void addCubeMap(Viewer &viewer, std::string texture)
+{
 	ShaderProgramPtr cubeMapShader = addShader(viewer, "cubeMap");
-	std::string cubemap_dir = "../../sfmlGraphicsPipeline/textures/"+texture;
+	std::string cubemap_dir = "../../sfmlGraphicsPipeline/textures/" + texture;
 	auto cubemap = std::make_shared<CubeMapRenderable>(cubeMapShader, cubemap_dir);
 	viewer.addRenderable(cubemap);
 }
 
-std::shared_ptr<TexturedLightedMeshRenderable> createTexturedLightedObj(ShaderProgramPtr shader, std::string obj, std::string texture, MaterialPtr material) {
+// easy way to create a textured object
+std::shared_ptr<TexturedLightedMeshRenderable> createTexturedLightedObj(ShaderProgramPtr shader, std::string obj, std::string texture, MaterialPtr material)
+{
 	return std::make_shared<TexturedLightedMeshRenderable>(shader, MESHES_PATH + obj, material, TEXTURE_PATH + texture);
 }
 
@@ -152,10 +164,10 @@ int main() {
 
 	auto left_arm_penguin = createTexturedLightedObj(texShader, "bras.obj", "penguin.png", simpleMaterial);
 	left_arm_penguin -> setGlobalTransform(getTranslationMatrix(-0.8,2,0) * getRotationMatrix(M_PI, glm::vec3(0,1,0)));
-	// left_arm_penguin -> setLocalTransform(getTranslationMatrix(-0.8,2,0));
 
 	left_arm_penguin -> addGlobalTransformKeyframe(getTranslationMatrix(-0.8,2,0) * getRotationMatrix(M_PI, glm::vec3(0,1,0))*getRotationMatrix(0, glm::vec3(1,0,0)), 0);
 
+	// add an animation to act like cutting the tree
 	for (int i = 0; i < 5; i++) {
 		float f = 0.2;
 		left_arm_penguin -> addGlobalTransformKeyframe(getTranslationMatrix(-0.8,2,0) * getRotationMatrix(M_PI, glm::vec3(0,1,0))*getRotationMatrix(0, glm::vec3(1,0,0)), i*f+f);
@@ -166,7 +178,6 @@ int main() {
 	left_arm_penguin -> addGlobalTransformKeyframe(getTranslationMatrix(-0.8,2,0) * getRotationMatrix(M_PI, glm::vec3(0,1,0)), 2.3);
 	left_arm_penguin -> addGlobalTransformKeyframe(getTranslationMatrix(-0.8,2,0) * getRotationMatrix(M_PI, glm::vec3(0,1,0)), 5);
 	
-
 	auto house = createTexturedLightedObj(texShader, "house.obj", "house.png", simpleMaterial);
 	house -> setGlobalTransform(getTranslationMatrix(7,5.2,-8) * getRotationMatrix(degToRad(30), glm::vec3(0,1,0)));
 
@@ -200,8 +211,7 @@ int main() {
 	waterPlane->setGlobalTransform(getRotationMatrix(M_PI/2, glm::vec3(1,0,0)) * getScaleMatrix(300));
 	waterPlane->setWrapOption(2);
 
-	// HierarchicalRenderable::addChild(boat, penguin);
-
+	// the axe are also a hierarchical in this scene
 	HierarchicalRenderable::addChild(penguin, right_arm_penguin);
 	HierarchicalRenderable::addChild(penguin, left_arm_penguin);
 	HierarchicalRenderable::addChild(left_arm_penguin, axe);
@@ -220,24 +230,17 @@ int main() {
 	createFlag(viewer, system, systemRenderable);
     system->setDt(8e-4);
 
-
 	/*START ANIMATION*/
 	viewer.startAnimation();
 
 	/*CAMERA*/
 	Camera& camera = viewer.getCamera();
 	glm::vec3 forward = glm::vec3(0, 0, -1); // In OpenGL, the camera's forward axis is -z
-	
-	// camera.addGlobalTransformKeyframe(lookAtModel(glm::vec3(27,4.6,1.8), glm::vec3(20,4.6,0), forward), 0);
-	// camera.addGlobalTransformKeyframe(lookAtModel(glm::vec3(27,4.6,1.8), glm::vec3(20,4.6,0), forward), 3);
-	// camera.addGlobalTransformKeyframe(lookAtModel(glm::vec3(21,9,0), glm::vec3(13.5,6,-4), forward), 5);
-	// camera.addGlobalTransformKeyframe(lookAtModel(glm::vec3(14,8,-2.7), glm::vec3(10,6,-6.6), forward), 7);
-	// camera.addGlobalTransformKeyframe(lookAtModel(glm::vec3(11,6,-8), glm::vec3(10,6,-6.6), forward), 10);
-	// camera.addGlobalTransformKeyframe(lookAtModel(glm::vec3(9.8,6,-5), glm::vec3(7,6,-5.8), forward), 13);
-	// camera.addGlobalTransformKeyframe(lookAtModel(glm::vec3(8.5,6,-5), glm::vec3(7,6,-5.8), forward), 14.5);
-	// camera.addGlobalTransformKeyframe(lookAtModel(glm::vec3(8.5,6,-5), glm::vec3(7,6,-5.8), forward), 20);
+
+	// fixed camera, not using animation
 
 	setCameraPosition(viewer, glm::mat4({-0.207138, 0.599903, -0.772794, -0, -7.45058e-09, 0.789926, 0.613202, 0, 0.978312, 0.127018, -0.163624, -0, 4.07106, -9.55271, -0.25323, 1}));
+	// new night cube map
 	addCubeMap(viewer, "night");
 	viewer.setKeyboardSpeed(8);
 	viewer.setSimulationTime(0);
@@ -245,9 +248,6 @@ int main() {
 	while( viewer.isRunning()) {
 		viewer.handleEvent();
 		viewer.animate();
-
-		int imageNumber = static_cast<int>(viewer.getTime()/2 * 20) % 20;
-		waterPlane->setImage(TEXTURE_PATH + "ocean/"+std::to_string(imageNumber)+".png");
 
 		viewer.draw();
 		viewer.display();
@@ -289,14 +289,6 @@ void createFlag(Viewer& viewer, DynamicSystemPtr& system, DynamicSystemRenderabl
     system->addForceField(dampingForceField);
 
 	flag->setGlobalTransform(getTranslationMatrix(10,7.1,-6.1) * getRotationMatrix(M_PI/2, glm::vec3(1,0,0)) * getRotationMatrix(degToRad(60), glm::vec3(0,0,1)) * getScaleMatrix(3));
-
-	 //Create a springListRenderable to efficiently visualize the springs of the system
-    // SpringListRenderablePtr springsRenderable = std::make_shared<SpringListRenderable>(flatShader, flag->getSprings());
-    // HierarchicalRenderable::addChild( systemRenderable, springsRenderable );
-
-    // //Create a particleListRenderable to efficiently visualize the particles of the system
-    // ParticleListRenderablePtr particleListRenderable = std::make_shared<ParticleListRenderable>( instancedShader, flag->getParticles());
-    // HierarchicalRenderable::addChild(systemRenderable, particleListRenderable);
 
     viewer.addRenderable(flag);
     viewer.stopAnimation();
